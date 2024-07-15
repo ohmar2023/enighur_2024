@@ -84,7 +84,7 @@ export(distribucion %>% select(zonal,pro,area,id_upm,periodo,semana),
        paste0(ruta_distr,"muestra_upm_periodo_semana.xlsx"))
 
   
-  
+distribucion %>% group_by(zonal,pro) %>% summarise(n()) %>% View()
   
   
 

@@ -37,9 +37,7 @@ export(envio,"productos/02_muestra_upm/muestra_upm_man_sec.rds")
 viv_par_ocu_man_sec <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/viv_par_ocu_man_sec.rds")
 
 envio_2 <- envio %>% left_join(viv_par_ocu_man_sec)
-export(envio_2,"productos/02_muestra_upm/muestra_upm_man_sec_viv_par_ocu.rds")
-
-
+export(envio_2,"productos/02_muestra_upm/muestra_upm_man_sec_viv_par_ocu.xlsx")
 
 
 
