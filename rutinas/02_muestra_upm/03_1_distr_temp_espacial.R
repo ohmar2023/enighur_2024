@@ -6,7 +6,15 @@ library(janitor)
 library(rio)
 }
 
+# -----------------------------------------------------------------------------
+# Lectura de la muestra
+# -----------------------------------------------------------------------------
+
 muestra <- readRDS("insumos/02_muestra_upm/muestra.rds")
+
+# -----------------------------------------------------------------------------
+# Creamos la variable zonal
+# -----------------------------------------------------------------------------
 
 distribucion <- muestra %>% 
   mutate(zonal = case_when(pro %in% c("04","08","10","17","21","25","30") ~ "norte",
@@ -31,7 +39,6 @@ distribucion %>%
   group_by(id_cong) %>% 
   mutate(n = n()) %>% 
   ungroup() %>% View()
-
 
 # CONTROL DE VALANCEO ENTRE SEMESTRES -------------------------------------
 
