@@ -72,6 +72,15 @@ sectores %>%
   ggplot() +
   geom_sf(aes(fill = quitar)) +
   ggtitle("Machala (Parroquia)")
+
+marco_upm %>% 
+  group_by(pro) %>% 
+  mutate(total_viv = sum(Mi)) %>% 
+  ungroup() %>% 
+  filter(id_upm %in% machala_peligroso) %>% 
+  group_by(pro) %>% 
+  summarise(prom = sum(Mi)*100/unique(total_viv)) %>% 
+  View()
  
 # -------------------------------------------------------------------------
 # MORONA - COSTOSO --------------------------------------------------------
