@@ -159,8 +159,13 @@ marco_upm %>%
     prom_upm_excluir = n_distinct(id_upm)*100/(total_upm)) %>% 
   View()
 
+# ----------------------------------------------------------------------------
 
+aux <- marco_upm %>% 
+  mutate( can = substr(id_upm,1,4)) %>% 
+  filter(pro == "13") 
 
+table(aux$can,aux$estrato)
 
 
 

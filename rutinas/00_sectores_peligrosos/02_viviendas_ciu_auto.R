@@ -19,6 +19,7 @@ marco_upm %>%
   group_by(cod_ciu,area) %>% 
   summarise( viv_ocupadas = sum(Mi)) %>% 
   arrange(cod_ciu) %>% 
+  filter(cod_ciu %in% c("0901","2301","1308")) %>% 
   pivot_wider(names_from = area,values_from = viv_ocupadas) %>% 
   View()
   
