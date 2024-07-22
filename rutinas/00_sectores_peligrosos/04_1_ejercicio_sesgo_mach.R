@@ -13,14 +13,14 @@ marco_upm <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/marco/m
 part_man <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/pobl_machala/particion_manzanas_li_60.rds")
 
 poblacion2022_1 <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/pobl_machala/poblacion2022_machala.rds") %>% 
-  mutate(#DO_CIET19 = ifelse(is.na(DO_CIET19),0,DO_CIET19),
-         #DE_CIET13 = ifelse(is.na(DE_CIET13),0,DE_CIET13),
-         id_edif = substr(id_viv,1,18)) %>%
+  mutate(id_edif = substr(id_viv,1,18)) %>%
   rename(id_conglo = id_upm) %>% 
-  left_join(part_man,by="id_edif") %>% 
+  left_join(part_man,by = "id_edif") %>% 
   mutate(grupo = ifelse(is.na(grupo), "01", grupo ),
          grupo =  str_pad(grupo, 2, "left", pad = "0"),
          id_upm = paste0(id_conglo,grupo))
+
+poblacion2022_1 %>% select(id_upm,id_edif,man_sec) %>% View()
 
 n_distinct(poblacion2022_1$id_upm)  
 nchar(poblacion2022_1$id_viv)
@@ -59,7 +59,6 @@ machala_zonas <- c("070150002",
                    "070150017",
                    "070150064",
                    "070150066")
-
 
 base_1 <- poblacion2022_1 %>% 
   mutate(
