@@ -1,3 +1,5 @@
+rm(list = ls())
+
 {
 library(rio)
 library(tidyverse)
@@ -33,6 +35,9 @@ envio <- muestra_man_sec %>%
 export(envio,"productos/02_muestra_upm/muestra_upm_man_sec.xlsx")
 export(envio,"productos/02_muestra_upm/muestra_upm_man_sec.rds")
 
+# -----------------------------------------------------------------------------
+# viviendas por upm
+# -----------------------------------------------------------------------------
 
 viv_par_ocu_man_sec <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/viv_par_ocu_man_sec.rds")
 

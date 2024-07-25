@@ -1,13 +1,15 @@
 
 rm(list = ls())
 
+{
 library(srvyr)
 library(sampling)
 library(survey)
 library(sampling)
 library(tidyverse)
 library(TeachingSampling)
-
+}
+  
 distr_estratos_enighur <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/pobl_machala/distr_estratos_enighur.rds")
 marco_upm <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/marco/marco_upm.rds")
 part_man <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/pobl_machala/particion_manzanas_li_60.rds")
@@ -123,7 +125,7 @@ tam_estrato <- distr_estratos_enighur %>%
   
   
   nd_prov_mean <- dis %>%  group_by(pro) %>% 
-    summarise(d1 = survey_mean(DE_CIET13, 
+    summarise(d1 = survey_mean(DO_CIET19,#DE_CIET19, 
                                vartype=c("se","ci","cv","var"),
                                na.rm = T,deff = T),n=n(),N=sum(f_exp)) 
 
@@ -141,3 +143,14 @@ tam_estrato <- distr_estratos_enighur %>%
 
 
 
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
