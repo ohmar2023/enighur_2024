@@ -10,11 +10,17 @@ library(tidyverse)
 library(TeachingSampling)
 }
   
-distr_estratos_enighur <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/pobl_machala/distr_estratos_enighur.rds")
-marco_upm <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/marco/marco_upm.rds")
-part_man <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/pobl_machala/particion_manzanas_li_60.rds")
+# Tamaño de UPM en cada estrato ENIGHUR ---------------------------------------- 
+distr_estratos_enighur <- readRDS("insumos/02_muestra_upm/pobl_machala/distr_estratos_enighur.rds")
 
-poblacion2022_1 <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/pobl_machala/poblacion2022_machala.rds") %>% 
+# MARCO UPM --------------------------------------------------------------------
+marco_upm <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
+
+# Base que especifica la particion de las SUPER MANZANAS -----------------------
+part_man <- readRDS("insumos/02_muestra_upm/pobl_machala/particion_manzanas_li_60.rds")
+
+# Base a nivel de personas para los calculos de indices y estimaciones ---------
+poblacion2022_1 <- readRDS("insumos/02_muestra_upm/pobl_machala/poblacion2022_machala.rds") %>% 
   mutate(id_edif = substr(id_viv,1,18)) %>%
   rename(id_conglo = id_upm) %>% 
   left_join(part_man,by = "id_edif") %>% 
@@ -22,12 +28,11 @@ poblacion2022_1 <- readRDS("D:/OMAR LLAMBO/enighur_2024/insumos/02_muestra_upm/p
          grupo =  str_pad(grupo, 2, "left", pad = "0"),
          id_upm = paste0(id_conglo,grupo))
 
-poblacion2022_1 %>% select(id_upm,id_edif,man_sec) %>% View()
+# ------------------------------------------------------------------------------
+# A continuación se crean vectores para identificar las zonas peligrosas
+# ------------------------------------------------------------------------------
 
-n_distinct(poblacion2022_1$id_upm)  
-nchar(poblacion2022_1$id_viv)
-table(poblacion2022_1$DE_CIET13,useNA = "ifany")
-
+# identificadores de UPM. Estas las encontramos en id_upm
 machala_peligroso <- c("070150001001",
                        "070150001701",
                        "070150002401",
@@ -47,7 +52,7 @@ machala_peligroso <- c("070150001001",
                        "070150078401",
                        "070150085401",
                        "070150089401")
-# Estas zonas las vamos a encontrar en man_sec y las vamos a canjear por id_congl
+# Identificadores de ZONAS. Estas zonas las vamos a encontrar en man_sec
 machala_zonas <- c("070150002",
                    "070150003",
                    "070150004",
@@ -61,14 +66,11 @@ machala_zonas <- c("070150002",
                    "070150017",
                    "070150064",
                    "070150066")
-
+# Se filtran las UPM peligrosas en la base de personas
 base_1 <- poblacion2022_1 %>% 
-  mutate(
-    id_upm_10 = substr(id_upm,1,10),
-    zonas = substr(man_sec,1,9)) %>% 
-  mutate ( peligro = case_when(id_upm_10 %in% machala_peligroso ~ 0,
-                               zonas %in% machala_zonas ~ 0,
-                               T ~ 1)) %>% 
+  mutate( zonas = substr(man_sec,1,9)) %>% 
+  mutate ( peligro = case_when(id_upm %in% machala_peligroso ~ 0,
+                               zonas %in% machala_zonas ~ 0, T ~ 1)) %>% 
   group_by(id_upm) %>% 
   mutate(peligro = mean(peligro)) %>% 
   ungroup() %>% 
