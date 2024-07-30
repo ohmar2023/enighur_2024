@@ -75,40 +75,40 @@ base_1 <- poblacion2022_1 %>%
   mutate(peligro = mean(peligro)) %>% 
   ungroup() %>% 
   filter(peligro == 1)
-
+# Tamaño de la muestra por estratos para la ciudad de MACHALA (40)
 tam_estrato <- distr_estratos_enighur %>% 
   filter(grepl(estrato,pattern = "40"))
-
+# Marco de UPM
   marco <- marco_upm 
-  
-  marco_upm <- marco |> 
-    right_join(tam_estrato,by= "estrato") |> 
-    group_by(estrato) |> 
-    mutate(aux_pii = PikPPS(nh, Mi)) |> 
-    ungroup() %>% 
-    filter(id_upm %in% base_1$id_upm)
-  
+# Se calculan las probabilidades de selección de UPM-PPT
+  marco_upm <- marco %>% 
+    filter(id_upm %in% base_1$id_upm) 
+   
+ #Definimos el marco de viviendas
   marco_viv <- base_1 %>% group_by(id_upm,id_viv) %>% 
     summarise() %>% 
     ungroup() 
   # ---------------------------------------------------------------------------
+  # Planteamos una simulación del proceso 200 veces
+  # ---------------------------------------------------------------------------
+  
  resultante <- NULL
   for(i in c(1:200)){ 
     
     #estan las 124 UPM 
     
-    #tengo que hacer una base de viv con estas upm: pobl
-  muestra = marco_upm%>% 
-    right_join(tam_estrato) %>%  #aqui se están emparejando los tamaños por estrato nh 
+   # Selección de la muestra a nivel de UPM
+  muestra = marco_upm %>% 
+    right_join(tam_estrato) %>% 
     arrange(estrato, desc(Mi)) %>% 
     group_by(estrato) %>% 
     mutate(pik = inclusionprobabilities(Mi, unique(nh)),
            sel = UPrandomsystematic(pik, eps=1e-6)) %>% 
     filter(sel == 1)
-    
+    # Selección de vividas dentro de cada UPM
     select_viv <- marco_viv %>% 
     filter(id_upm %in% muestra$id_upm) %>% 
-    group_by(id_upm) %>%  
+    group_by(id_upm) %>%
     sample_n(12)
   
   muestra_pobl <- muestra %>% 

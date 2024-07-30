@@ -1,3 +1,6 @@
+
+rm(list = ls())
+
 {
   library(sf)
   library(sp) 
@@ -5,8 +8,11 @@
   library(tidyverse)
   library(janitor)
   library(leaflet)
+  library(plotly)
 }
 
+# MARCO UPM --------------------------------------------------------------------
+marco_upm <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 # -------------------------------------------------------------------------
 # LECTURA DE LOS SHAPES A NIVE DE SECTORES Y MANZANAS ---------------------
 # -------------------------------------------------------------------------
@@ -71,7 +77,9 @@ sectores %>%
   filter(pro == "070150") %>% 
   ggplot() +
   geom_sf(aes(fill = quitar)) +
-  ggtitle("Machala (Parroquia)")
+  ggtitle("Machala (Parroquia)") +
+  labs(fill = "Zonas")
+
 
 marco_upm %>% 
   group_by(pro) %>% 
@@ -179,7 +187,8 @@ sectores %>%
   filter(pro == "14") %>% 
   ggplot() +
   geom_sf(aes(fill = quitar)) +
-  ggtitle("Morona Santiago (Provincia)")
+  ggtitle("Morona Santiago (Provincia)")+
+  labs(fill = "Zonas")
 
 
 # -------------------------------------------------------------------------
@@ -204,7 +213,8 @@ sectores %>%
   filter(pro == "16") %>% 
   ggplot() +
   geom_sf(aes(fill = quitar))+
-  ggtitle("Pastaza (Provincia)")
+  ggtitle("Pastaza (Provincia)")+
+  labs(fill = "Zonas")
 
 # -------------------------------------------------------------------------
 # ORELLANA - COSTOSOS -----------------------------------------------------
@@ -221,7 +231,8 @@ sectores %>%
   filter(pro == "220159") %>% 
   ggplot() +
   geom_sf(aes(fill = quitar)) + 
-  ggtitle("NUEVO PARAISO (Parroquia) - Orellana")
+  ggtitle("NUEVO PARAISO (Parroquia) - Orellana")+
+  labs(fill = "Zonas")
 
 
 
