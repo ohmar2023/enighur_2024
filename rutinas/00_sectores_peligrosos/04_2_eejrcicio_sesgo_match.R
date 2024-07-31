@@ -1,4 +1,5 @@
 rm(list=ls())
+
 library(rio)
 library(tidyverse)
 library(sampling)
@@ -6,14 +7,11 @@ library(stringr)
 library(srvyr)
 library(openxlsx)
 
-# Muestra ENIGHUR-MACHALA
-mue_eni_mac <- import("./insumos/distr_estratos_enighur.rds") %>% 
-  mutate(cod=substr(estrato,1,2)) %>% 
-  filter(cod=="40") %>% 
-  select(-cod)
+# Muestra ENIGHUR-MACHALA 
+mue_eni_mac <- tam_estrato
 
 # Marco UPM-MACHALA 
-marco_upm <- import("./insumos/marco_upm.rds") %>% 
+marco_upm_01 <- marco_upm %>% 
   filter(domest=="401") %>% 
   select(-area)
 
@@ -43,7 +41,7 @@ muestra_upm <- vector("list",200)
 
 for (i in 1:200) {
 
-  muestra_upm[[i]] <- marco_upm %>% 
+  muestra_upm[[i]] <- marco_upm_01 %>% 
     left_join(mue_eni_mac, by = "estrato") %>%  #aqui se están emparejando los tamaños por estrato nh 
     arrange(estrato, desc(Mi)) %>% 
     group_by(estrato) %>% 
