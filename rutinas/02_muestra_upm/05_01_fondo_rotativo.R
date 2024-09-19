@@ -39,7 +39,7 @@ aux <- muestra_upm_man_sec %>%
          cambio_sec = ifelse(cambio_upm == TRUE,TRUE,cambio_sec),
          aux_cambio = n_distinct(man_sec),
          super_man = substr(id_upm,11,12),
-         disp_upm = if_else(cambio_upm == 0 & 
+         disp_upm = ifelse(cambio_upm == 0 & 
                               super_man == "01" & 
                               periodo > 3,1,0)) %>% 
   ungroup() 
@@ -106,5 +106,6 @@ final %>% group_by(semana) %>% summarise(n()) %>% view()
 muestra_upm_man_sec %>% group_by(semana) %>% summarise(n()) %>% view()
 
 
+export(aux,"aux_.xlsx")
 
 
