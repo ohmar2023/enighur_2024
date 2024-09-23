@@ -32,17 +32,19 @@ fondo_rotativo <- read_excel("insumos/02_muestra_upm/fondos_rotativos/FONDO ROTA
 aux <- muestra_upm_man_sec %>% 
   left_join(select(muestra,estrato,id_upm),by = "id_upm") %>% 
   mutate(cambio_sec = ifelse(man_sec %in% fondo_rotativo$muestra &
-           periodo %in% c(1,2,3) &
-           substr(id_upm,1,2)!="20",TRUE,FALSE)) %>% 
+           periodo %in% c(1,2,3,4) &
+           substr(man_sec,1,2)!="20",TRUE,FALSE)) %>% 
   group_by(id_upm) %>% 
   mutate(cambio_upm = ifelse(sum(cambio_sec) > 0,TRUE,FALSE),
          cambio_sec = ifelse(cambio_upm == TRUE,TRUE,cambio_sec),
          aux_cambio = n_distinct(man_sec),
          super_man = substr(id_upm,11,12),
-         disp_upm = ifelse(cambio_upm == 0 & 
+         disp_upm = ifelse(cambio_upm == FALSE & 
+                             sum(man_sec %in% fondo_rotativo$muestra) == 0 &
                               super_man == "01" & 
-                              periodo > 3,1,0)) %>% 
-  ungroup() 
+                              periodo > 4 ,TRUE,FALSE)) %>% 
+   ungroup() %>% 
+   mutate(cambio_upm = ifelse(id_upm %in%  c("140953901301","140954900301"), FALSE, cambio_upm))
 
 # -----------------------------------------------------------------------------
 # Bases IDS x UPM
@@ -61,7 +63,7 @@ estrato_cambio <- id_upm_cambio %>%
 
 set.seed(19092024)
 
-id_upm_disponible <- aux %>% filter(cambio_upm == 0 ) %>% 
+id_upm_disponible <- aux %>% filter(disp_upm == TRUE) %>% 
   group_by(id_upm,estrato,periodo) %>% 
   summarise() %>% 
   ungroup() %>% 
@@ -69,7 +71,7 @@ id_upm_disponible <- aux %>% filter(cambio_upm == 0 ) %>%
   filter(!is.na(n)) %>% 
   group_by(estrato) %>% 
   sample_n(unique(n)) %>% 
-  arrange(estrato)
+  arrange(estrato) #%>% group_by(estrato) %>% summarise(n())
   
 # -----------------------------------------------------------------------------
 # Periodos nuevos
