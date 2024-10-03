@@ -1,3 +1,8 @@
+# -----------------------------------------------------------------------------
+# Se realiza el match con los codigos man_sec, este producto es el que se
+# enviará como resultado de la muestra.
+# -----------------------------------------------------------------------------
+
 rm(list = ls())
 
 {
@@ -5,6 +10,7 @@ library(rio)
 library(tidyverse)
 library(janitor)
 }
+
 
 man_sec_upm <- readRDS("insumos/02_muestra_upm/man_sec_upm.rds") %>% 
   rename(id_conglomerado=id_upm)

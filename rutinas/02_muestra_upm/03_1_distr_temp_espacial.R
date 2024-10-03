@@ -1,3 +1,10 @@
+# -----------------------------------------------------------------------------
+# Se realiza la distribución en espacio y tiempo acorde al vector:
+# c(1, 8, 4, 11, 2, 9, 5, 12, 3, 10, 6, 13, 7)
+# Para el caso de galapagos se considera las peticiones realziadas por DIES 
+# para que las visitas sean realizadas en un determinado orden en cada isla.
+# -----------------------------------------------------------------------------
+
 rm(list = ls())
 
 {
@@ -71,7 +78,6 @@ nueva_galapagos_2 <- rbind(san_crsitobal[1:16,],
 distribucion <- distribucion %>% filter(pro != "20") %>% 
   rbind(nueva_galapagos_2 %>% select(-islas, -islas_2))
 
-
 # -----------------------------------------------------------------------------  
 # CONTROL CONGLOMERADO (10 DIG) EN EL MISMO PERIODO ---------------------------
 # -----------------------------------------------------------------------------
@@ -94,7 +100,6 @@ distribucion %>%
   mutate(dif = `1` - `2`) %>% 
   View()
 
-
 # CONTROL ZONAL Y PERIODO -------------------------------------------------
 
 distribucion %>% 
@@ -104,7 +109,6 @@ distribucion %>%
   adorn_totals(c("col","row")) %>% 
   View()
   
-
 # CONTROL POR SEMANA Y ZONAL ----------------------------------------------
 
 distribucion %>% 
@@ -113,7 +117,6 @@ distribucion %>%
   pivot_wider(names_from = semana,values_from = n) %>% 
   adorn_totals(c("col","row")) %>% 
   View()
-
   
 # CONTROL POR SEMANA Y ZONAL ----------------------------------------------
 
@@ -132,8 +135,6 @@ ruta_distr <- "productos/02_muestra_upm/"
 export(distribucion %>% select(zonal,pro,area,id_upm,periodo,semana),
        paste0(ruta_distr,"muestra_upm_periodo_semana.xlsx"))
 
-  
-distribucion %>% group_by(zonal,pro) %>% summarise(n()) %>% View()
   
   
 
