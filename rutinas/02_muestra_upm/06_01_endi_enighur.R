@@ -21,7 +21,8 @@ rm(list = ls())
 # Lectura de bases de datos
 # -----------------------------------------------------------------------------
 
-final <- read_excel("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_002.xlsx") %>% rename(periodo = "periodo_nuevo")
+#final <- read_excel("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_002.xlsx") %>% rename(periodo = "periodo_nuevo")
+final <- read_excel("muestra_upm_man_sec_fondo_rot_002_nueva.xlsx") %>% rename(periodo = "periodo_nuevo")
 upm_fondo_rot <- read_excel("productos/02_muestra_upm/muestra_upm_periodo_fondo_rot.xlsx") 
 enighur_en_endi <- readRDS("rutinas/02_muestra_upm/muestra_enighur_en_endi.rds") %>% 
   select(id_upm)
@@ -35,15 +36,18 @@ upm_mover <- enighur_en_endi %>% left_join(select(upm_fondo_rot, id_upm, periodo
 
 cambiar_upm <- function(u_1,u_2,base)
 {
-  a_1 <- base %>% filter(id_upm %in% c(u_1)) %>% select(id_upm,periodo)  %>% filter(!duplicated(id_upm))
+  a_1 <- base %>% filter(id_upm %in% c(u_1)) %>% select(id_upm,periodo,semana)  %>% filter(!duplicated(id_upm))
   
   #--- UPM del estato 1422 que vamos a intercambiar
-  b_1 <- base %>% filter(id_upm %in% c(u_2)) %>% select(id_upm,periodo) %>% filter(!duplicated(id_upm))
+  b_1 <- base %>% filter(id_upm %in% c(u_2)) %>% select(id_upm,periodo,semana) %>% filter(!duplicated(id_upm))
   
   #--- Generando el cambio
   base <- base %>% mutate(
     periodo_nuevo = ifelse(id_upm == a_1$id_upm, b_1$periodo, periodo_nuevo),
-    periodo_nuevo = ifelse(id_upm == b_1$id_upm, a_1$periodo, periodo_nuevo))
+    periodo_nuevo = ifelse(id_upm == b_1$id_upm, a_1$periodo, periodo_nuevo),
+    
+    semana_nueva =  ifelse(id_upm == a_1$id_upm, b_1$semana, semana_nueva),
+    semana_nueva =  ifelse(id_upm == b_1$id_upm, a_1$semana, semana_nueva))
 }
 
 # -----------------------------------------------------------------------------

@@ -89,10 +89,12 @@ id_upm_disponible <- aux %>% filter(disp_upm == TRUE) %>%
 # -----------------------------------------------------------------------------
 
 a <- cbind(id_upm_cambio,
-      periodo_nuevo = id_upm_disponible$periodo)
+      periodo_nuevo = id_upm_disponible$periodo,
+      semana_nueva = id_upm_disponible$semana)
 
 b <- cbind(id_upm_disponible %>% select(-n),
-      periodo_nuevo = id_upm_cambio$periodo)
+      periodo_nuevo = id_upm_cambio$periodo,
+      semana_nueva = id_upm_cambio$semana)
 
 a_b <- rbind(a,b)
 
@@ -101,9 +103,17 @@ a_b <- rbind(a,b)
 # -----------------------------------------------------------------------------
 
 final <- muestra_upm_man_sec %>% 
-  left_join(select(a_b, periodo_nuevo,id_upm,estrato),by = c("id_upm")) %>% 
+  left_join(select(a_b, semana_nueva,periodo_nuevo,id_upm,estrato),by = c("id_upm")) %>% 
   mutate(periodo_nuevo = ifelse(is.na(periodo_nuevo),periodo,periodo_nuevo),
+         semana_nueva = ifelse(is.na(semana_nueva),semana,semana_nueva),
          control = periodo == periodo_nuevo) 
+
+# -----------------------------------------------------------------------------
+# Controles
+# -----------------------------------------------------------------------------
+
+final %>% 
+  mutate(control = periodo == periodo_nuevo) %>% View()
 
 # --- upm faltante
 aux_2 <- final %>% filter(control == FALSE)
@@ -134,33 +144,51 @@ final %>%
 # Cambio de las 2 UPM faltantes, las vamos a cambiar con 2 de otros estratos
 # -----------------------------------------------------------------------------
 
-#--- UPM del estato 1421 que aun no han sido cambiadas
-
-a_1 <- final %>% filter(id_upm %in% c("140953901301")) %>% select(id_upm,periodo)  %>% filter(!duplicated(id_upm))
-a_2 <- final %>% filter(id_upm %in% c("140954900301")) %>% select(id_upm,periodo)  %>% filter(!duplicated(id_upm))
-
-
-#--- UPM del estato 1422 que vamos a intercambiar
-b_1 <- final %>% filter(id_upm %in% c("141251000201")) %>% select(id_upm,periodo) %>% filter(!duplicated(id_upm))
-b_2 <- final %>% filter(id_upm %in% c("140952000101")) %>% select(id_upm,periodo)  %>% filter(!duplicated(id_upm))
-
-#--- Generando el cambio
-final <- final %>% mutate(
-  periodo_nuevo = ifelse(id_upm == a_1$id_upm, b_1$periodo, periodo_nuevo),
-  periodo_nuevo = ifelse(id_upm == a_2$id_upm, b_2$periodo, periodo_nuevo),
+# #--- UPM del estato 1421 que aun no han sido cambiadas
+# 
+# a_1 <- final %>% filter(id_upm %in% c("140953901301")) %>% select(id_upm,periodo,semana)  %>% filter(!duplicated(id_upm))
+# a_2 <- final %>% filter(id_upm %in% c("140954900301")) %>% select(id_upm,periodo,semana)  %>% filter(!duplicated(id_upm))
+# 
+# 
+# #--- UPM del estato 1422 que vamos a intercambiar
+# b_1 <- final %>% filter(id_upm %in% c("141251000201")) %>% select(id_upm,periodo,semana) %>% filter(!duplicated(id_upm))
+# b_2 <- final %>% filter(id_upm %in% c("140952000101")) %>% select(id_upm,periodo,semana)  %>% filter(!duplicated(id_upm))
+# 
+# #--- Generando el cambio
+# final <- final %>% mutate(
+#   periodo_nuevo = ifelse(id_upm == a_1$id_upm, b_1$periodo, periodo_nuevo),
+#   periodo_nuevo = ifelse(id_upm == a_2$id_upm, b_2$periodo, periodo_nuevo),
+#   
+#   periodo_nuevo = ifelse(id_upm == b_1$id_upm, a_1$periodo, periodo_nuevo),
+#   periodo_nuevo = ifelse(id_upm == b_2$id_upm, a_2$periodo, periodo_nuevo))  
   
-  periodo_nuevo = ifelse(id_upm == b_1$id_upm, a_1$periodo, periodo_nuevo),
-  periodo_nuevo = ifelse(id_upm == b_2$id_upm, a_2$periodo, periodo_nuevo))  
+# -----------------------------------------------------------------------------
+# FUNCIÓN PARA REALIZAR EL CAMBIO
+# -----------------------------------------------------------------------------
+
+cambiar_upm <- function(u_1,u_2,base)
+{
+  a_1 <- base %>% filter(id_upm %in% c(u_1)) %>% select(id_upm,periodo,semana)  %>% filter(!duplicated(id_upm))
   
+  #--- UPM del estato 1422 que vamos a intercambiar
+  b_1 <- base %>% filter(id_upm %in% c(u_2)) %>% select(id_upm,periodo,semana) %>% filter(!duplicated(id_upm))
+  
+  #--- Generando el cambio
+  base <- base %>% mutate(
+    periodo_nuevo = ifelse(id_upm == a_1$id_upm, b_1$periodo, periodo_nuevo),
+    periodo_nuevo = ifelse(id_upm == b_1$id_upm, a_1$periodo, periodo_nuevo),
+    
+    semana_nueva =  ifelse(id_upm == a_1$id_upm, b_1$semana, semana_nueva),
+    semana_nueva =  ifelse(id_upm == b_1$id_upm, a_1$semana, semana_nueva))
+}
+
+final <- cambiar_upm("140953901301","141251000201",final) 
+final <- cambiar_upm("140954900301","140952000101",final) 
+final <- final %>% mutate(control = periodo == periodo_nuevo)
 
 # -----------------------------------------------------------------------------
 # Exportando
 # -----------------------------------------------------------------------------
 
-export(final,"muestra_upm_man_sec_fondo_rot_002.xlsx")
-
-
-
-
-
+export(final,"muestra_upm_man_sec_fondo_rot_002_nueva.xlsx")
 
