@@ -17,7 +17,7 @@ base_piloto <- read_excel("insumos/03_enlistamiento/00_piloto/Base Prueba Piloto
 
 base <- base_piloto
 # -----------------------------------------------------------------------------
-# Agregando la variable: zonales
+# Agregando la variable: zonal
 # -----------------------------------------------------------------------------
 
 base <- base %>% 
@@ -27,7 +27,7 @@ base <- base %>%
                            pro %in% c("01","03","11","07","14","19","27","28","31") ~ "sur")) 
 
 # -----------------------------------------------------------------------------
-# Agregando la variable: zonales
+# Controlando los caracteres eb variables
 # -----------------------------------------------------------------------------
 
 base <- base %>% 
