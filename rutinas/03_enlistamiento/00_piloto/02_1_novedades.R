@@ -14,7 +14,6 @@ rm(list = ls())
 
 base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
 
-
 # -----------------------------------------------------------------------------
 # Condición de ocupación
 # -----------------------------------------------------------------------------
@@ -70,28 +69,30 @@ ocupada <- base %>%
          no_id_unico = ifelse(no_id_unico > 1, 1, 0),
          c_12_hbt = ifelse(tot_hbt > 12, 1, 0),
          c_no_upm = ifelse(is.na(id_upm), 1, 0),
-         c_n_char_upm = ifelse(nchar(id_upm)==12,1,0),
+         c_n_char_upm = ifelse(nchar(id_upm) != 12,1,0),
          c_total = c_na_pro + c_in_pro + c_na_can + c_in_can + c_na_par + 
            c_in_par + c_na_zon +  c_in_zon + c_na_sec + c_in_sec + c_na_manloc +
            c_in_manloc + c_na_n_edif + c_in_n_edif + c_na_n_viv + c_in_n_viv + 
            c_na_piso_n + c_in_piso_n + no_id_unico + c_12_hbt + c_no_upm + 
            c_n_char_upm) %>% 
-  filter(c_total > 1) 
+  filter(c_total > 0) 
 
-dim(incosistencia)
-names(apply(incosistencia[,60:65], 2, sum) )
-s <- apply(incosistencia[,60:65], 2, sum)
-s[1]
-class(s)
-length(s)
-names(s)
-(incosistencia[s > 0])
-# 
-# %>% 
-#   select(-d_n_edif, -d_n_viv, -man_nloc, -id_viv, -n0a5, -control_nombre, -tipo, -id_upm, -sec_2021) %>% 
-#   mutate(control_total = no_id_unico + c_na_pro + c_in_pro + c_na_can + c_in_can + c_na_par + 
-#            c_in_par + c_na_zon + c_in_zon + c_na_sec + c_in_sec + c_na_manloc + c_in_manloc + 
-#            c_na_n_edif + c_in_n_edif + c_na_n_viv + c_in_n_viv + c_na_piso_n + c_in_piso_n + 
-#            c_hbt + c_n0a5 + c_12_hbt + c_no_upm) %>% 
-#   filter(control_total > 0) %>% 
-#   select(-control_total)
+a = dim(ocupada)[2]+1
+b = dim(incosistencia)[2]
+var_eliminar <- apply(incosistencia[,a:b],2,sum)[(apply(incosistencia[,a:b], 2, sum) == 0)]
+
+incosistencia <- incosistencia %>% select(-c(names(var_eliminar)))
+a = dim(ocupada)[2]+1
+b = dim(incosistencia)[2]
+
+apply(incosistencia[,a:b], 2, sum)
+
+
+
+
+
+
+
+
+
+
