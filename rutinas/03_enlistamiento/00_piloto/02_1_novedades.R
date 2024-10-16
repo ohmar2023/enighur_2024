@@ -96,3 +96,31 @@ apply(incosistencia[,a:b], 2, sum)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
