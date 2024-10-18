@@ -6,14 +6,15 @@ rm(list = ls())
   library(tidyverse)
   library(janitor)
   library(readxl)
+  library(openxlsx)
 }
 
 # -----------------------------------------------------------------------------
-# Exportando
+# Importando
 # -----------------------------------------------------------------------------
 
 base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
-
+marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 # -----------------------------------------------------------------------------
 # Condición de ocupación
 # -----------------------------------------------------------------------------
@@ -22,7 +23,7 @@ base %>%
   group_by(condicón = c_ocup,zonal) %>% 
   summarise(n = n()) %>% 
   pivot_wider(names_from = zonal, values_from = n) %>% 
-  adorn_totals(c("col")) %>%
+  adorn_totals(c("col")) %>% 
   arrange(condicón) %>% 
   View()
 
@@ -37,7 +38,6 @@ ocupada <- base %>%
   mutate(
     man_nloc = ifelse(man != "000", man, n_loc),
     id_viv = paste0(pro, can, par, zon, sec, man_nloc, n_umce, n_viv))
-
 
 # -----------------------------------------------------------------------------
 # Novedades detectadas
@@ -67,6 +67,7 @@ ocupada <- base %>%
          c_na_piso_n = ifelse(is.na(piso_n), 1, 0),
          c_in_piso_n = 0,
          no_id_unico = ifelse(no_id_unico > 1, 1, 0),
+         
          c_12_hbt = ifelse(tot_hbt > 12, 1, 0),
          c_no_upm = ifelse(is.na(id_upm), 1, 0),
          c_n_char_upm = ifelse(nchar(id_upm) != 12,1,0),
@@ -88,21 +89,39 @@ b = dim(incosistencia)[2]
 apply(incosistencia[,a:b], 2, sum)
 
 
+mesm <- paste0(c(rep(2022, 6), rep(2023, 6)), str_pad(c(7:12, 1:6), 2, "left", "0"))
+mesm[12]
 
 
+# -----------------------------------------------------------------------------
+# UPM con alto rechazo o nadie en casa
+# -----------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
+ocupado_upm <- ocupada %>%
+  mutate(control_nombre = ifelse(substr(primernjh, 1, 5) == "nadie", "Nadie en casa",
+                                 ifelse(primernjh == "rechazo", "Rechazo",
+                                        ifelse(primernjh == "nn", "Sin Nombre", "Con nombre"))),
+         # conformidad en el enlistamiento
+         re = ifelse(control_nombre %in% c("Con nombre", "Sin Nombre"), 1, 0),
+         nr = ifelse(control_nombre == "Rechazo", 1, 0),
+         ed = ifelse(control_nombre == "Nadie en casa", 1, 0)) %>% 
+  group_by(pro, id_upm) %>% 
+  mutate(viv_act = n(),
+         viv_re = sum(re),
+         viv_nr = sum(nr),
+         viv_ed = sum(ed)) %>%
+  mutate(viv_nr_ed = (viv_nr + viv_ed)/viv_act) %>% 
+  filter(!is.na(id_upm)) %>% 
+  left_join(marco, by = c("id_upm","pro")) %>% 
+  filter(!is.na(id_upm)) %>% 
+  filter(viv_nr_ed > 0.1) %>% 
+  group_by(id_upm, pro, can, par, zon, sec, man, loc) %>% 
+  summarise(viv_act = n(),
+            viv_efectivas = sum(re),
+            viv_rechazo = sum(nr),
+            viv_ncasa = sum(ed),
+            upm_alerta = mean(viv_nr_ed)) %>% 
+  mutate(upm_alerta = round(upm_alerta*100, 2))
 
 
 
