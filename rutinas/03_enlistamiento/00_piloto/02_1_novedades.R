@@ -10,6 +10,12 @@ rm(list = ls())
 }
 
 # -----------------------------------------------------------------------------
+# Actualizar mes (variable mese)
+# -----------------------------------------------------------------------------
+
+mese <- 1
+
+# -----------------------------------------------------------------------------
 # Importando
 # -----------------------------------------------------------------------------
 
@@ -43,7 +49,7 @@ ocupada <- base %>%
 # Novedades detectadas
 # -----------------------------------------------------------------------------
 
-  incosistencia <- ocupada %>%  
+  inconsistencia <- ocupada %>%  
   group_by(id_viv, id_upm) %>% 
   mutate(no_id_unico = n()) %>% 
   ungroup() %>% 
@@ -82,25 +88,24 @@ a = dim(ocupada)[2]+1
 b = dim(incosistencia)[2]
 var_eliminar <- apply(incosistencia[,a:b],2,sum)[(apply(incosistencia[,a:b], 2, sum) == 0)]
 
-incosistencia <- incosistencia %>% select(-c(names(var_eliminar)))
-a = dim(ocupada)[2]+1
-b = dim(incosistencia)[2]
+#incosistencia <- incosistencia %>% select(-c(names(var_eliminar)))
+#a = dim(ocupada)[2]+1
+#b = dim(incosistencia)[2]
+#apply(incosistencia[,a:b], 2, sum)
 
-apply(incosistencia[,a:b], 2, sum)
-
-
-mesm <- paste0(c(rep(2022, 6), rep(2023, 6)), str_pad(c(7:12, 1:6), 2, "left", "0"))
-mesm[12]
-
+inconsistencia_01 <- inconsistencia %>% select(-all_of(names(var_eliminar)))
 
 # -----------------------------------------------------------------------------
 # UPM con alto rechazo o nadie en casa
 # -----------------------------------------------------------------------------
 
 ocupado_upm <- ocupada %>%
-  mutate(control_nombre = ifelse(substr(primernjh, 1, 5) == "nadie", "Nadie en casa",
-                                 ifelse(primernjh == "rechazo", "Rechazo",
-                                        ifelse(primernjh == "nn", "Sin Nombre", "Con nombre"))),
+  mutate(
+    #primernjh = ifelse(is.na(primernjh)," "," "),
+    control_nombre = case_when(substr(primernjh, 1, 5) == "nadie" ~ "Nadie en casa",
+                               primernjh == "rechazo" ~ "Rechazo",
+                               is.na(primernjh) ~ "Sin nombre",
+                               TRUE ~ "Con nombre"),
          # conformidad en el enlistamiento
          re = ifelse(control_nombre %in% c("Con nombre", "Sin Nombre"), 1, 0),
          nr = ifelse(control_nombre == "Rechazo", 1, 0),
@@ -123,9 +128,18 @@ ocupado_upm <- ocupada %>%
             upm_alerta = mean(viv_nr_ed)) %>% 
   mutate(upm_alerta = round(upm_alerta*100, 2))
 
+# -----------------------------------------------------------------------------
+# Exportando
+# -----------------------------------------------------------------------------
 
+mesm <- paste0(c(rep(2022, 6), rep(2023, 6)), str_pad(c(7:12, 1:6), 2, "left", "0"))
+dir.create(paste0("intermedios/03_enlistamiento/consistencia/", mesm[mese]), showWarnings = F) 
 
-
+wb <- createWorkbook("Inconsistencias base enlistamiento")
+addWorksheet(wb, "Viviendas")
+addWorksheet(wb, "UPMs")
+writeData(wb, sheet = "Viviendas", inconsistencia_01)
+writeData(wb, sheet = "UPMs", ocupado_upm)
 
 
 

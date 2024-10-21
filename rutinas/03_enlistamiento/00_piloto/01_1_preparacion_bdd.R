@@ -27,7 +27,7 @@ base <- base %>%
                            pro %in% c("01","03","11","07","14","19","27","28","31") ~ "sur")) 
 
 # -----------------------------------------------------------------------------
-# Controlando los caracteres eb variables
+# Controlando los caracteres en variables
 # -----------------------------------------------------------------------------
 
 base <- base %>% 
@@ -40,6 +40,8 @@ base <- base %>%
          n_loc = str_pad(n_loc, 3, "left", "0"),
          n_umce = str_pad(n_umce, 4, "left", "0"),
          n_viv = str_pad(n_viv, 4, "left", "0"),
+         primernjh = tolower(primernjh),
+         primernjh = gsub(" ", "", primernjh),
          tot_hbt = ifelse(is.na(tot_hbt) | tot_hbt == "", 0, tot_hbt)) %>% 
   replace(. == "",NA)
 
