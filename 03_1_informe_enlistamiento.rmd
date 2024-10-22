@@ -1,0 +1,73 @@
+---
+title: "Reporte de novedades del enlistamiento de la ENIGHUR "
+author: "Omar Llambo"
+subtitle: Dirección de infraestructura de estadística y muestreo (DINEM)
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: cerulean
+    highlight: kate
+  pdf_document:
+    toc: yes
+---
+
+```{r, include=FALSE,echo = FALSE}
+library(readxl)
+library(dplyr)
+library(tidyverse)
+library(janitor)
+library(reshape2)
+library(DT)
+library(rio)
+```
+
+
+```{r, message = FALSE,echo = FALSE}
+
+# CARGAMOS --------------------------------------------------------------------
+
+
+base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
+marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
+
+```
+
+## Construcción del marco muestral
+
+Considerando el listado de los códigos (Código CIIU Rev 4 - 6 dígitos) que se enviaron de los productos que forman parte de la canasta del IPP, se seleccionan las actividades pricipales (Código CIIU4 - Sección - 1 dígito) para la elaboración del marco de muestreo.
+
+Se consideran las empresas cuya situación consta como "activas" (1) y se descartan las microempresas, con lo que se tiene: 
+
+* 2	Pequeña empresa
+* 3	Mediana empresa "A"
+* 4	Mediana empresa "B"
+* 5	Grande empresa
+
+El tamaño y actividad principal económica de la empresa conforman cada dominio de estudio:
+
+```{r, message = FALSE,echo = FALSE}
+
+
+```
+
+
+## Forma Institucional
+
+La forma institucional corresponde a una sub-clasificación de la forma legal de las empresas, que permite identificar a las empresas dentro de una tipología cercana al tipo institucional del Sistema de Cuentas Nacionales.
+
+Las posibles clasifiaciones son:
+
+* 1	Régimen simplificado RISE
+* 2	Persona Natural no obligado a llevar contabilidad
+* 3	Persona Natural obligado a llevar contabilidad
+* 4	Sociedad con fines de lucro
+* 5	Sociedad sin fines de lucro
+* 6	Empresa Pública
+* 7	Institución Pública
+* 8	Economía Popular y Solidaria
+
+
+
+
+
