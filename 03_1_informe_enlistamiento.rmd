@@ -25,49 +25,104 @@ library(rio)
 
 ```{r, message = FALSE,echo = FALSE}
 
-# CARGAMOS --------------------------------------------------------------------
-
+# -----------------------------------------------------------------------------
+# Importando
+# -----------------------------------------------------------------------------
 
 base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
 marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 
 ```
 
-## Construcción del marco muestral
-
-Considerando el listado de los códigos (Código CIIU Rev 4 - 6 dígitos) que se enviaron de los productos que forman parte de la canasta del IPP, se seleccionan las actividades pricipales (Código CIIU4 - Sección - 1 dígito) para la elaboración del marco de muestreo.
-
-Se consideran las empresas cuya situación consta como "activas" (1) y se descartan las microempresas, con lo que se tiene: 
-
-* 2	Pequeña empresa
-* 3	Mediana empresa "A"
-* 4	Mediana empresa "B"
-* 5	Grande empresa
-
-El tamaño y actividad principal económica de la empresa conforman cada dominio de estudio:
+## Condición de ocupación
 
 ```{r, message = FALSE,echo = FALSE}
 
+# -----------------------------------------------------------------------------
+# Condición de ocupación
+# -----------------------------------------------------------------------------
+
+base %>% 
+  group_by(condicón = c_ocup,zonal) %>% 
+  summarise(n = n()) %>% 
+  pivot_wider(names_from = zonal, values_from = n) %>% 
+  adorn_totals(c("row","col")) 
 
 ```
 
 
-## Forma Institucional
-
-La forma institucional corresponde a una sub-clasificación de la forma legal de las empresas, que permite identificar a las empresas dentro de una tipología cercana al tipo institucional del Sistema de Cuentas Nacionales.
-
-Las posibles clasifiaciones son:
-
-* 1	Régimen simplificado RISE
-* 2	Persona Natural no obligado a llevar contabilidad
-* 3	Persona Natural obligado a llevar contabilidad
-* 4	Sociedad con fines de lucro
-* 5	Sociedad sin fines de lucro
-* 6	Empresa Pública
-* 7	Institución Pública
-* 8	Economía Popular y Solidaria
+## Incosistencia variables de ubicación
 
 
+```{r, message = FALSE,echo = FALSE}
+
+# -----------------------------------------------------------------------------
+# Incosistencia variables de ubicación
+# -----------------------------------------------------------------------------
+
+rbind(base %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(pro)),
+            Perdidos = sum(is.na(pro)),
+            Inconsistentes = sum(!(as.numeric(pro) %in% 1:24))) %>% 
+        mutate(Variable = "pro"),
+      base %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(can)),
+            Perdidos = sum(is.na(can)),
+            Inconsistentes = sum(!(as.numeric(can) %in% 1:99))) %>% 
+        mutate(Variable = "can"),
+      base %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(par)),
+            Perdidos = sum(is.na(par)),
+            Inconsistentes = sum(!(as.numeric(par) %in% 50:99))) %>% 
+        mutate(Variable = "par"),
+      base %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(zon)),
+            Perdidos = sum(is.na(zon)),
+            Inconsistentes = sum(!(as.numeric(zon) %in% 1:999))) %>% 
+        mutate(Variable = "zon"),
+      base %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(sec)),
+            Perdidos = sum(is.na(sec)),
+            Inconsistentes = sum(!(as.numeric(sec) %in% 1:999))) %>% 
+        mutate(Variable = "sec"),
+      base %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(man != "000"),
+            Perdidos = sum(man == "000"),
+            Inconsistentes = sum(!(as.numeric(man) %in% 0:999))) %>% 
+        mutate(Variable = "man"),
+      base %>%
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(n_loc != "000"),
+            Perdidos = sum(n_loc == "000"),
+            Inconsistentes = sum(!(as.numeric(n_loc) %in% 0:999))) %>% 
+  mutate(Variable = "n_loc"),
+      base %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(n_edif)),
+            Perdidos = sum(is.na(n_edif)),
+            Inconsistentes = sum(!(as.numeric(n_edif) %in% 1:999 | is.na(n_edif)) )) %>% 
+        mutate(Variable = "n_edif"),
+      base %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum((as.numeric(n_viv) %in% 1:999)),
+            Perdidos = sum(is.na(n_viv)),
+            Inconsistentes = sum(!(as.numeric(n_viv) %in% 1:999 | is.na(n_viv)) )) %>% 
+        mutate(Variable = "n_viv"),
+      base %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(piso_n) & piso_n != "NULL"),
+            Perdidos = sum(is.na(piso_n) | piso_n == "NULL"),
+            Inconsistentes = sum(inc_piso_n, na.rm = T)) %>% 
+        mutate(Variable = "piso_n")) %>% 
+  select(Variable, `Válidos` = Validos, Perdidos, Inconsistentes)
+
+```
 
 
 
