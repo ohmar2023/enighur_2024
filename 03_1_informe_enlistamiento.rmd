@@ -13,13 +13,13 @@ output:
 ---
 
 ```{r, include=FALSE,echo = FALSE}
-library(readxl)
-library(dplyr)
-library(tidyverse)
-library(janitor)
-library(reshape2)
-library(DT)
-library(rio)
+  library(readxl)
+  library(dplyr)
+  library(tidyverse)
+  library(janitor)
+  library(reshape2)
+  library(DT)
+  library(rio)
 ```
 
 
@@ -61,68 +61,68 @@ base %>%
 # -----------------------------------------------------------------------------
 
 rbind(base %>% 
-        filter(c_ocup == "Particular - Ocupada") %>%
+        filter(c_ocup == "particular - ocupada") %>%
         summarise(Validos = sum(!is.na(pro)),
             Perdidos = sum(is.na(pro)),
             Inconsistentes = sum(!(as.numeric(pro) %in% 1:24))) %>% 
         mutate(Variable = "pro"),
       base %>% 
-        filter(c_ocup == "Particular - Ocupada") %>%
+        filter(c_ocup == "particular - ocupada") %>%
         summarise(Validos = sum(!is.na(can)),
             Perdidos = sum(is.na(can)),
             Inconsistentes = sum(!(as.numeric(can) %in% 1:99))) %>% 
         mutate(Variable = "can"),
       base %>% 
-        filter(c_ocup == "Particular - Ocupada") %>%
+        filter(c_ocup == "particular - ocupada") %>%
         summarise(Validos = sum(!is.na(par)),
             Perdidos = sum(is.na(par)),
             Inconsistentes = sum(!(as.numeric(par) %in% 50:99))) %>% 
         mutate(Variable = "par"),
       base %>% 
-        filter(c_ocup == "Particular - Ocupada") %>%
+        filter(c_ocup == "particular - ocupada") %>%
         summarise(Validos = sum(!is.na(zon)),
             Perdidos = sum(is.na(zon)),
             Inconsistentes = sum(!(as.numeric(zon) %in% 1:999))) %>% 
         mutate(Variable = "zon"),
       base %>% 
-        filter(c_ocup == "Particular - Ocupada") %>%
+        filter(c_ocup == "particular - ocupada") %>%
         summarise(Validos = sum(!is.na(sec)),
             Perdidos = sum(is.na(sec)),
             Inconsistentes = sum(!(as.numeric(sec) %in% 1:999))) %>% 
         mutate(Variable = "sec"),
       base %>% 
-        filter(c_ocup == "Particular - Ocupada") %>%
+        filter(c_ocup == "particular - ocupada") %>%
         summarise(Validos = sum(man != "000"),
             Perdidos = sum(man == "000"),
             Inconsistentes = sum(!(as.numeric(man) %in% 0:999))) %>% 
         mutate(Variable = "man"),
       base %>%
-        filter(c_ocup == "Particular - Ocupada") %>%
+        filter(c_ocup == "particular - ocupada") %>%
         summarise(Validos = sum(n_loc != "000"),
             Perdidos = sum(n_loc == "000"),
             Inconsistentes = sum(!(as.numeric(n_loc) %in% 0:999))) %>% 
   mutate(Variable = "n_loc"),
       base %>% 
-        filter(c_ocup == "Particular - Ocupada") %>%
-        summarise(Validos = sum(!is.na(n_edif)),
-            Perdidos = sum(is.na(n_edif)),
-            Inconsistentes = sum(!(as.numeric(n_edif) %in% 1:999 | is.na(n_edif)) )) %>% 
-        mutate(Variable = "n_edif"),
-      base %>% 
-        filter(c_ocup == "Particular - Ocupada") %>%
-        summarise(Validos = sum((as.numeric(n_viv) %in% 1:999)),
-            Perdidos = sum(is.na(n_viv)),
-            Inconsistentes = sum(!(as.numeric(n_viv) %in% 1:999 | is.na(n_viv)) )) %>% 
-        mutate(Variable = "n_viv"),
-      base %>% 
-        filter(c_ocup == "Particular - Ocupada") %>%
-        summarise(Validos = sum(!is.na(piso_n) & piso_n != "NULL"),
-            Perdidos = sum(is.na(piso_n) | piso_n == "NULL"),
-            Inconsistentes = sum(inc_piso_n, na.rm = T)) %>% 
-        mutate(Variable = "piso_n")) %>% 
+        filter(c_ocup == "particular - ocupada") %>%
+        summarise(Validos = sum(!is.na(n_umce)),
+            Perdidos = sum(is.na(n_umce)),
+            Inconsistentes = sum(!(as.numeric(n_umce) %in% 1:999 | is.na(n_umce)) )) %>% 
+        mutate(Variable = "n_edif"), 
+       base %>%
+         filter(c_ocup == "particular - ocupada") %>%
+         summarise(Validos = sum((as.numeric(n_viv) %in% 1:999)),
+             Perdidos = sum(is.na(n_viv)),
+             Inconsistentes = sum(!(as.numeric(n_viv) %in% 1:999 | is.na(n_viv)) )) %>%
+         mutate(Variable = "n_viv"),
+       base %>% 
+         filter(c_ocup == "particular - ocupada") %>%
+         summarise(Validos = sum(!is.na(piso_n) & piso_n != "NULL"),
+             Perdidos = sum(is.na(piso_n) | piso_n == "NULL"),
+             Inconsistentes = sum(inc_piso_n, na.rm = T)) %>%
+         mutate(Variable = "piso_n")) %>%
   select(Variable, `Válidos` = Validos, Perdidos, Inconsistentes)
 
 ```
 
 
-
+    
