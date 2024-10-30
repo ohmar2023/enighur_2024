@@ -21,6 +21,7 @@ mese <- 1
 
 base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
 marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
+
 # -----------------------------------------------------------------------------
 # Condición de ocupación
 # -----------------------------------------------------------------------------
@@ -140,7 +141,7 @@ addWorksheet(wb, "Viviendas")
 addWorksheet(wb, "UPMs")
 writeData(wb, sheet = "Viviendas", inconsistencia_01)
 writeData(wb, sheet = "UPMs", ocupado_upm)
-
+  
 
 
 

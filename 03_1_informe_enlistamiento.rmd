@@ -113,16 +113,68 @@ rbind(base %>%
          summarise(Validos = sum((as.numeric(n_viv) %in% 1:999)),
              Perdidos = sum(is.na(n_viv)),
              Inconsistentes = sum(!(as.numeric(n_viv) %in% 1:999 | is.na(n_viv)) )) %>%
-         mutate(Variable = "n_viv"),
-       base %>% 
-         filter(c_ocup == "particular - ocupada") %>%
-         summarise(Validos = sum(!is.na(piso_n) & piso_n != "NULL"),
-             Perdidos = sum(is.na(piso_n) | piso_n == "NULL"),
-             Inconsistentes = sum(inc_piso_n, na.rm = T)) %>%
-         mutate(Variable = "piso_n")) %>%
+         mutate(Variable = "n_viv")) %>% 
+       # base %>% 
+       #   filter(c_ocup == "particular - ocupada") %>%
+       #   summarise(Validos = sum(!is.na(piso_n) & piso_n != "NULL"),
+       #       Perdidos = sum(is.na(piso_n) | piso_n == "NULL"),
+       #       Inconsistentes = sum(inc_piso_n, na.rm = T)) %>%
+       #   mutate(Variable = "piso_n")) %>%
   select(Variable, `Válidos` = Validos, Perdidos, Inconsistentes)
 
 ```
 
 
-    
+  
+## Resultados del enlistamiento a nivel de UPM
+
+
+
+
+
+```{r echo=F, message=F, warning=F, results='markup'}
+base %>% filter(c_ocup == "particular - ocupada") %>% 
+  group_by(id_upm) %>% 
+  summarise(viv_act = n()) %>%
+  filter(!is.na(id_upm)) %>% 
+  left_join(marco, by = "id_upm") %>% 
+  filter(!is.na(id_upm)) %>% 
+  rename(`Área` = area) %>% 
+  ggplot(aes(viv, viv_act)) + 
+  geom_point(aes(colour = `Área`)) +
+  geom_abline(intercept = 0, slope = 1,linetype = "dashed") +
+  labs(x = "Número de viviendas según el marco",
+       y = "Número de viviendas según enlistamiento") +
+  theme(aspect.ratio = 1/1.10 ,
+        panel.background = element_rect(fill = "#E4E3DB",
+                                        colour = "#E4E3DB",
+                                        size = 0.5, linetype = "solid"),
+        panel.grid.minor = element_blank(),
+        strip.background = element_rect(fill="white"),
+        axis.title = element_text(size=8),
+        axis.text = element_text(size=7),
+        axis.ticks = element_blank(),
+        legend.direction = "horizontal", 
+        legend.position = "bottom",
+        legend.box = "vertical",
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 7),
+        legend.box.spacing = unit(0, "cm"),
+        legend.title.align = 0.5) +
+  coord_fixed() +
+  scale_y_continuous( breaks = seq(0, 1000, 100)) +
+  scale_y_continuous( breaks = seq(0, 1000, 100))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
