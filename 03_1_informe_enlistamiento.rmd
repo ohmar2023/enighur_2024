@@ -29,10 +29,32 @@ output:
 # Importando
 # -----------------------------------------------------------------------------
 
+muestra <- read_excel("muestra_upm_man_sec_fondo_rot_004.xlsx")
 base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
 marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 
 ```
+
+```{r, message = FALSE,echo = FALSE}
+
+# -----------------------------------------------------------------------------
+# Condición de ocupación
+# -----------------------------------------------------------------------------
+
+mese <- 1
+
+base <- base %>% 
+  separate(piso_n, into = c("piso1", "piso2"),
+           sep = "-", remove = F) %>% 
+  mutate(inc_piso_n = ifelse(otros != "Sin Edificación" & piso_n == "", 1, 
+                      ifelse(otros != "Sin Edificación" & (!piso1 %in% 1:99), 1,
+                      ifelse(otros != "Sin Edificación" & (!piso2 %in% 1:99) & !is.na(piso2), 1,  
+                      ifelse(otros != "Sin Edificación" & piso2 <= piso1 & !is.na(piso2), 1,0)))))
+
+muestra <- muestra %>% 
+  filter(periodo_nuevo == mese)
+```
+
 
 ## Condición de ocupación
 
