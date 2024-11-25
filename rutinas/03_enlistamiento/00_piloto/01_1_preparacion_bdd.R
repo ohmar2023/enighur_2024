@@ -16,6 +16,7 @@ base_piloto <- read_excel("insumos/03_enlistamiento/00_piloto/Base Prueba Piloto
                             id_upm = upm)
 
 base <- base_piloto
+marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 # -----------------------------------------------------------------------------
 # Agregando la variable: zonal
 # -----------------------------------------------------------------------------
@@ -43,7 +44,9 @@ base <- base %>%
          primernjh = tolower(primernjh),
          primernjh = gsub(" ", "", primernjh),
          tot_hbt = ifelse(is.na(tot_hbt) | tot_hbt == "", 0, tot_hbt)) %>% 
-  replace(. == "",NA)
+  replace(. == "",NA) %>% 
+  mutate(man_sec_21 = ifelse(zon == "999", paste0(pro, can, par, zon, sec), 
+                             paste0(pro, can, par, zon, sec, man)))
 
 # -----------------------------------------------------------------------------
 # Exportando

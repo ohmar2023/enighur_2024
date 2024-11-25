@@ -10,7 +10,7 @@ rm(list = ls())
 }
 
 # -----------------------------------------------------------------------------
-# Actualizar mes (variable mese)
+# Actualizar mes (variable mese) : falta considerar en la base
 # -----------------------------------------------------------------------------
 
 mese <- 1
@@ -18,7 +18,10 @@ mese <- 1
 # -----------------------------------------------------------------------------
 # Importando
 # -----------------------------------------------------------------------------
+# fecha <- substr(last(list.files("insumos/03_enlistamiento/pentaho/csv/",
+#                                 recursive = F, pattern = "enlistamiento")), 15, 22)
 
+fecha <- "20242411"
 base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
 marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 
@@ -78,21 +81,23 @@ ocupada <- base %>%
          c_12_hbt = ifelse(tot_hbt > 12, 1, 0),
          c_no_upm = ifelse(is.na(id_upm), 1, 0),
          c_n_char_upm = ifelse(nchar(id_upm) != 12,1,0),
+         
          c_total = c_na_pro + c_in_pro + c_na_can + c_in_can + c_na_par + 
            c_in_par + c_na_zon +  c_in_zon + c_na_sec + c_in_sec + c_na_manloc +
            c_in_manloc + c_na_n_edif + c_in_n_edif + c_na_n_viv + c_in_n_viv + 
            c_na_piso_n + c_in_piso_n + no_id_unico + c_12_hbt + c_no_upm + 
            c_n_char_upm) %>% 
-  filter(c_total > 0) 
+  filter(c_total > 0) %>% 
+  select(-c_total)
 
 a = dim(ocupada)[2]+1
-b = dim(incosistencia)[2]
-var_eliminar <- apply(incosistencia[,a:b],2,sum)[(apply(incosistencia[,a:b], 2, sum) == 0)]
+b = dim(inconsistencia)[2]
+var_eliminar <- apply(inconsistencia[,a:b],2,sum)[(apply(inconsistencia[,a:b], 2, sum) == 0)]
 
 #incosistencia <- incosistencia %>% select(-c(names(var_eliminar)))
 #a = dim(ocupada)[2]+1
 #b = dim(incosistencia)[2]
-#apply(incosistencia[,a:b], 2, sum)
+#apply(inconsistencia[,a:b], 2, sum)
 
 inconsistencia_01 <- inconsistencia %>% select(-all_of(names(var_eliminar)))
 
@@ -133,8 +138,10 @@ ocupado_upm <- ocupada %>%
 # Exportando
 # -----------------------------------------------------------------------------
 
-mesm <- paste0(c(rep(2022, 6), rep(2023, 6)), str_pad(c(7:12, 1:6), 2, "left", "0"))
-dir.create(paste0("intermedios/03_enlistamiento/consistencia/", mesm[mese]), showWarnings = F) 
+mesm <- paste0(c(rep(2024, 1), rep(2025, 12)), str_pad(c(12:12, 1:12), 2, "left", "0"))
+dir <- paste0("intermedios\\03_enlistamiento\\01_concistencia\\",mesm[mese])
+dir.create(dir, showWarnings = F) 
+dir.exists(dir)
 
 wb <- createWorkbook("Inconsistencias base enlistamiento")
 addWorksheet(wb, "Viviendas")
@@ -142,9 +149,7 @@ addWorksheet(wb, "UPMs")
 writeData(wb, sheet = "Viviendas", inconsistencia_01)
 writeData(wb, sheet = "UPMs", ocupado_upm)
   
-
-
-
+saveWorkbook(wb, paste0("intermedios/03_enlistamiento/01_concistencia/",mesm[mese], "/", fecha,".xlsx"), overwrite = T)
 
 
 
