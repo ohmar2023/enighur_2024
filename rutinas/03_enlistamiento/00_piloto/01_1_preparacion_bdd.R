@@ -11,11 +11,15 @@ rm(list = ls())
   library(readxl)
 }
 
-base_piloto <- read_excel("insumos/03_enlistamiento/00_piloto/Base Prueba Piloto EnighurAC.XLSX") %>% 
-  clean_names() %>% mutate (c_ocup = tolower(c_ocup),
-                            id_upm = upm)
-
-base <- base_piloto
+# base_piloto <- read_excel("insumos/03_enlistamiento/00_piloto/Base Prueba Piloto EnighurAC.XLSX") %>% 
+#   clean_names() %>% mutate (c_ocup = tolower(c_ocup),
+#                             id_upm = upm)
+# 
+# base <- base_piloto
+base <- read_excel("insumos/03_enlistamiento/2024_11_25/BaseMuestralENIGHURJ1paraDinem.xlsx") %>% 
+     clean_names() %>% mutate (c_ocup = tolower(c_ocup),
+                               id_upm = upm,
+                               tot_hbt = as.numeric(tot_hbt))
 marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 # -----------------------------------------------------------------------------
 # Agregando la variable: zonal

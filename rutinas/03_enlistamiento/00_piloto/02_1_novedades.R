@@ -21,7 +21,7 @@ mese <- 1
 # fecha <- substr(last(list.files("insumos/03_enlistamiento/pentaho/csv/",
 #                                 recursive = F, pattern = "enlistamiento")), 15, 22)
 
-fecha <- "20242411"
+fecha <- "20242511"
 base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
 marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 
@@ -40,13 +40,16 @@ base %>%
 validUTF8(base$c_ocup) %>% sum()
 
 # -----------------------------------------------------------------------------
-# Base viviendas ocupadas
+# Base viviendas ocupadas: Ojo porque los NA en man serian los que tienen loc
 # -----------------------------------------------------------------------------
 
+# control
+ocupada %>% select(man,n_loc,man_nloc) %>% filter(is.na(man_nloc)) %>% dim()
+
 ocupada <- base %>% 
-  filter(c_ocup == "particular - ocupada") %>% 
+  filter(grepl(c_ocup,pattern = "ocupada")) %>% 
   mutate(
-    man_nloc = ifelse(man != "000", man, n_loc),
+    man_nloc = ifelse(!is.na(man), man, n_loc),
     id_viv = paste0(pro, can, par, zon, sec, man_nloc, n_umce, n_viv))
 
 # -----------------------------------------------------------------------------
@@ -68,8 +71,10 @@ ocupada <- base %>%
          c_in_zon = ifelse(!(as.numeric(zon) %in% 1:999), 1, 0),
          c_na_sec = ifelse(is.na(sec), 1, 0),
          c_in_sec = ifelse(!(as.numeric(sec) %in% 1:999), 1, 0),
+         
          c_na_manloc = ifelse(is.na(man_nloc), 1, 0),
          c_in_manloc = ifelse(!(as.numeric(man_nloc) %in% 1:999), 1, 0),
+         
          c_na_n_edif = ifelse(is.na(n_umce), 1, 0),
          c_in_n_edif = ifelse(!(as.numeric(n_umce) %in% 1:999), 1, 0),
          c_na_n_viv = ifelse(is.na(n_viv), 1, 0),
@@ -152,7 +157,7 @@ writeData(wb, sheet = "UPMs", ocupado_upm)
 saveWorkbook(wb, paste0("intermedios/03_enlistamiento/01_concistencia/",mesm[mese], "/", fecha,".xlsx"), overwrite = T)
 
 
-
+ocupada %>% group_by(id_upm) %>% summarise(n = n()) %>% View()
 
 
 
