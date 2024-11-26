@@ -21,7 +21,7 @@ mese <- 1
 # fecha <- substr(last(list.files("insumos/03_enlistamiento/pentaho/csv/",
 #                                 recursive = F, pattern = "enlistamiento")), 15, 22)
 
-fecha <- "20242511"
+fecha <- "20242611"
 base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
 marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 
@@ -47,10 +47,10 @@ validUTF8(base$c_ocup) %>% sum()
 ocupada %>% select(man,n_loc,man_nloc) %>% filter(is.na(man_nloc)) %>% dim()
 
 ocupada <- base %>% 
-  filter(grepl(c_ocup,pattern = "ocupada")) %>% 
+  filter(grepl(c_ocup,pattern = "ocupada con")) %>% 
   mutate(
     man_nloc = ifelse(!is.na(man), man, n_loc),
-    id_viv = paste0(pro, can, par, zon, sec, man_nloc, n_umce, n_viv))
+    id_viv = paste0(pro, can, par, zon, sec, man_nloc, n_umce, n_viv)) 
 
 # -----------------------------------------------------------------------------
 # Novedades detectadas
@@ -157,7 +157,7 @@ writeData(wb, sheet = "UPMs", ocupado_upm)
 saveWorkbook(wb, paste0("intermedios/03_enlistamiento/01_concistencia/",mesm[mese], "/", fecha,".xlsx"), overwrite = T)
 
 
-ocupada %>% group_by(id_upm) %>% summarise(n = n()) %>% View()
+
 
 
 
