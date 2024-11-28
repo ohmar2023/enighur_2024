@@ -21,7 +21,7 @@ mese <- 1
 # fecha <- substr(last(list.files("insumos/03_enlistamiento/pentaho/csv/",
 #                                 recursive = F, pattern = "enlistamiento")), 15, 22)
 
-fecha <- "20242611"
+fecha <- "20242811"
 base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
 marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 

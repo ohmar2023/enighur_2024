@@ -17,7 +17,7 @@ rm(list = ls())
 # 
 # base <- base_piloto
 
-base <- read_excel("insumos/03_enlistamiento/2024_11_25/BaseMuestralENIGHURJ1paraDinem.xlsx",
+base <- read_excel("insumos/03_enlistamiento/2024_11_28/ReporteBaseMuestral_25-11-2024_ParaDinem.xlsx",
                    guess_max = 10000) %>% 
      clean_names() %>% mutate(c_ocup = tolower(c_ocup),
                                id_upm = upm,
