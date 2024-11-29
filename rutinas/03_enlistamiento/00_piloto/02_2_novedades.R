@@ -15,8 +15,8 @@ rm(list = ls())
 
 base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
 muestra <- import("muestra_upm_man_sec_fondo_rot_004.xlsx")
-novedades <- read_excel("insumos/03_enlistamiento/2024_11_25/novedades_j1.xlsx") %>% 
-  clean_names() %>% mutate(id_upm = upm) 
+#novedades <- read_excel("insumos/03_enlistamiento/2024_11_25/novedades_j1.xlsx") %>% 
+#  clean_names() %>% mutate(id_upm = upm) 
 
 per <- 1
 mese <- 1
@@ -55,12 +55,12 @@ upm_no_enlistadas <- muestra %>% filter(!id_upm %in% base$id_upm, periodo_nuevo=
 # upm que no aparecen en las novedades y no estan enlistadas
 # -----------------------------------------------------------------------------
 
-muestra %>% filter(!id_upm %in% base$id_upm, periodo_nuevo==1) %>% 
-  select(id_upm,man_sec) %>% 
-  group_by(id_upm) %>% 
-  summarise() %>% 
-  filter(!id_upm %in% novedades$id_upm) %>% 
-  View()
+# muestra %>% filter(!id_upm %in% base$id_upm, periodo_nuevo==1) %>% 
+#   select(id_upm,man_sec) %>% 
+#   group_by(id_upm) %>% 
+#   summarise() %>% 
+#   filter(!id_upm %in% novedades$id_upm) %>% 
+#   View()
 
 # -----------------------------------------------------------------------------
 # Exportando

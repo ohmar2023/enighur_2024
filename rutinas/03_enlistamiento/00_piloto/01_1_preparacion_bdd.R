@@ -1,5 +1,4 @@
 # -----------------------------------------------------------------------------
-
 # -----------------------------------------------------------------------------
 
 rm(list = ls())
@@ -9,19 +8,24 @@ rm(list = ls())
   library(tidyverse)
   library(janitor)
   library(readxl)
+  library(stringi)
 }
 
-# base_piloto <- read_excel("insumos/03_enlistamiento/00_piloto/Base Prueba Piloto EnighurAC.XLSX") %>% 
-#   clean_names() %>% mutate (c_ocup = tolower(c_ocup),
-#                             id_upm = upm)
-# 
-# base <- base_piloto
+# -----------------------------------------------------------------------------
+# Lectura base de enlistamiento
+# -----------------------------------------------------------------------------
 
-base <- read_excel("insumos/03_enlistamiento/2024_11_28/ReporteBaseMuestral_25-11-2024_ParaDinem.xlsx",
+base <- read_excel("insumos/03_enlistamiento/2024_11_28/BaseMuestralCompletaParaDinem25_11_2024.xlsx",
                    guess_max = 10000) %>% 
-     clean_names() %>% mutate(c_ocup = tolower(c_ocup),
-                               id_upm = upm,
-                               tot_hbt = as.numeric(tot_hbt))
+  clean_names() %>% 
+  mutate(c_ocup = tolower(c_ocup),
+         primernjh = toupper(stri_trans_general(primernjh,"Latin-ASCII")),
+         segundonjh	= toupper(stri_trans_general(segundonjh,"Latin-ASCII")),
+         primerajh = toupper(stri_trans_general(primerajh,"Latin-ASCII")),
+         segudonjh = toupper(stri_trans_general(segudonjh,"Latin-ASCII")),
+         id_upm = upm,
+         tot_hbt = as.numeric(tot_hbt))
+
 marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 # -----------------------------------------------------------------------------
 # Agregando la variable: zonal
@@ -45,15 +49,16 @@ base <- base %>%
          sec = str_pad(sec, 3, "left", "0"),
          man = str_pad(man, 3, "left", "0"),
          n_loc = str_pad(n_loc, 3, "left", "0"),
-         n_umce = str_pad(n_umce, 4, "left", "0"),
+         n_umce = str_pad(n_umce, 3, "left", "0"),
          n_viv = str_pad(n_viv, 4, "left", "0"),
-         primernjh = tolower(primernjh),
          primernjh = gsub(" ", "", primernjh),
+         segundonjh = gsub(" ", "", segundonjh),
+         primerajh = gsub(" ", "",primerajh),
+         segudonjh =gsub(" ", "",segudonjh),
          tot_hbt = ifelse(is.na(tot_hbt) | tot_hbt == "", 0, tot_hbt)) %>% 
   replace(. == "",NA) %>% 
   mutate(man_sec_21 = ifelse(zon == "999", paste0(pro, can, par, zon, sec), 
                              paste0(pro, can, par, zon, sec, man)))
-
 # -----------------------------------------------------------------------------
 # Exportando
 # -----------------------------------------------------------------------------

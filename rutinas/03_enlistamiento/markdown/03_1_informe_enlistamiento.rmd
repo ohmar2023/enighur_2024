@@ -1,0 +1,200 @@
+---
+title: "Reporte de novedades del enlistamiento de la ENIGHUR "
+author: "Omar Llambo"
+subtitle: Dirección de infraestructura de estadística y muestreo (DINEM)
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: cerulean
+    highlight: kate
+  pdf_document:
+    toc: yes
+---
+
+```{r, include=FALSE,echo = FALSE}
+  library(readxl)
+  library(dplyr)
+  library(tidyverse)
+  library(janitor)
+  library(reshape2)
+  library(DT)
+  library(rio)
+```
+
+
+```{r, message = FALSE,echo = FALSE}
+
+# -----------------------------------------------------------------------------
+# Importando
+# -----------------------------------------------------------------------------
+
+muestra <- read_excel("muestra_upm_man_sec_fondo_rot_004.xlsx")
+base <- readRDS("intermedios/03_enlistamiento/01_concistencia/base.rds")
+marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
+
+```
+
+```{r, message = FALSE,echo = FALSE}
+
+# -----------------------------------------------------------------------------
+# Condición de ocupación
+# -----------------------------------------------------------------------------
+
+mese <- 1
+
+
+base <- base %>% 
+  separate(piso_n, into = c("piso1", "piso2"),
+           sep = "-", remove = F) %>% 
+  mutate(inc_piso_n = ifelse((otros != "Sin Edificación" | is.na(otros)) & (piso_n == "" | is.na(piso_n) | piso_n=="NULL"), 1, 
+                             ifelse((otros != "Sin Edificación" | is.na(otros)) & (!piso1 %in% 1:99), 1,
+                                    ifelse((otros != "Sin Edificación" | is.na(otros)) & (!piso2 %in% 1:99) & !is.na(piso2), 1,  
+                                           ifelse((otros != "Sin Edificación" | is.na(otros)) & piso2 <= piso1 & !is.na(piso2), 1,0)))))
+
+muestra <- muestra %>% 
+  filter(periodo_nuevo == mese)
+```
+
+
+## Condición de ocupación
+
+```{r, message = FALSE,echo = FALSE}
+
+# -----------------------------------------------------------------------------
+# Condición de ocupación
+# -----------------------------------------------------------------------------
+
+base %>% 
+  group_by(condicón = c_ocup,zonal) %>% 
+  summarise(n = n()) %>% 
+  pivot_wider(names_from = zonal, values_from = n) %>% 
+  adorn_totals(c("row","col")) 
+
+```
+
+
+## Incosistencia variables de ubicación
+
+
+```{r, message = FALSE,echo = FALSE}
+
+# -----------------------------------------------------------------------------
+# Incosistencia variables de ubicación
+# -----------------------------------------------------------------------------
+
+rbind(base %>% 
+        filter(c_ocup == "particular - ocupada") %>%
+        summarise(Validos = sum(!is.na(pro)),
+            Perdidos = sum(is.na(pro)),
+            Inconsistentes = sum(!(as.numeric(pro) %in% 1:24))) %>% 
+        mutate(Variable = "pro"),
+      base %>% 
+        filter(c_ocup == "particular - ocupada") %>%
+        summarise(Validos = sum(!is.na(can)),
+            Perdidos = sum(is.na(can)),
+            Inconsistentes = sum(!(as.numeric(can) %in% 1:99))) %>% 
+        mutate(Variable = "can"),
+      base %>% 
+        filter(c_ocup == "particular - ocupada") %>%
+        summarise(Validos = sum(!is.na(par)),
+            Perdidos = sum(is.na(par)),
+            Inconsistentes = sum(!(as.numeric(par) %in% 50:99))) %>% 
+        mutate(Variable = "par"),
+      base %>% 
+        filter(c_ocup == "particular - ocupada") %>%
+        summarise(Validos = sum(!is.na(zon)),
+            Perdidos = sum(is.na(zon)),
+            Inconsistentes = sum(!(as.numeric(zon) %in% 1:999))) %>% 
+        mutate(Variable = "zon"),
+      base %>% 
+        filter(c_ocup == "particular - ocupada") %>%
+        summarise(Validos = sum(!is.na(sec)),
+            Perdidos = sum(is.na(sec)),
+            Inconsistentes = sum(!(as.numeric(sec) %in% 1:999))) %>% 
+        mutate(Variable = "sec"),
+      base %>% 
+        filter(c_ocup == "particular - ocupada") %>%
+        summarise(Validos = sum(man != "000"),
+            Perdidos = sum(man == "000"),
+            Inconsistentes = sum(!(as.numeric(man) %in% 0:999))) %>% 
+        mutate(Variable = "man"),
+      base %>%
+        filter(c_ocup == "particular - ocupada") %>%
+        summarise(Validos = sum(n_loc != "000"),
+            Perdidos = sum(n_loc == "000"),
+            Inconsistentes = sum(!(as.numeric(n_loc) %in% 0:999))) %>% 
+  mutate(Variable = "n_loc"),
+      base %>% 
+        filter(c_ocup == "particular - ocupada") %>%
+        summarise(Validos = sum(!is.na(n_umce)),
+            Perdidos = sum(is.na(n_umce)),
+            Inconsistentes = sum(!(as.numeric(n_umce) %in% 1:999 | is.na(n_umce)) )) %>% 
+        mutate(Variable = "n_edif"), 
+       base %>%
+         filter(c_ocup == "particular - ocupada") %>%
+         summarise(Validos = sum((as.numeric(n_viv) %in% 1:999)),
+             Perdidos = sum(is.na(n_viv)),
+             Inconsistentes = sum(!(as.numeric(n_viv) %in% 1:999 | is.na(n_viv)) )) %>%
+         mutate(Variable = "n_viv"),
+       base %>%
+         filter(c_ocup == "particular - ocupada") %>%
+         summarise(Validos = sum(!is.na(piso_n) & piso_n != "NULL"),
+             Perdidos = sum(is.na(piso_n) | piso_n == "NULL"),
+             Inconsistentes = sum(inc_piso_n, na.rm = T)) %>%
+         mutate(Variable = "piso_n")) %>%
+  select(Variable, `Válidos` = Validos, Perdidos, Inconsistentes)
+
+```
+
+
+  
+## Resultados del enlistamiento a nivel de UPM
+
+
+```{r echo=F, message=F, warning=F, results='markup'}
+base %>% filter(c_ocup == "particular - ocupada") %>% 
+  group_by(id_upm) %>% 
+  summarise(viv_act = n()) %>%
+  filter(!is.na(id_upm)) %>% 
+  left_join(marco, by = "id_upm") %>% 
+  filter(!is.na(id_upm)) %>% 
+  rename(`Área` = area) %>% 
+  ggplot(aes(viv, viv_act)) + 
+  geom_point(aes(colour = `Área`)) +
+  geom_abline(intercept = 0, slope = 1,linetype = "dashed") +
+  labs(x = "Número de viviendas según el marco",
+       y = "Número de viviendas según enlistamiento") +
+  theme(aspect.ratio = 1/1.10 ,
+        panel.background = element_rect(fill = "#E4E3DB",
+                                        colour = "#E4E3DB",
+                                        size = 0.5, linetype = "solid"),
+        panel.grid.minor = element_blank(),
+        strip.background = element_rect(fill="white"),
+        axis.title = element_text(size=8),
+        axis.text = element_text(size=7),
+        axis.ticks = element_blank(),
+        legend.direction = "horizontal", 
+        legend.position = "bottom",
+        legend.box = "vertical",
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 7),
+        legend.box.spacing = unit(0, "cm"),
+        legend.title.align = 0.5) +
+  coord_fixed() +
+  scale_y_continuous( breaks = seq(0, 1000, 100)) +
+  scale_y_continuous( breaks = seq(0, 1000, 100))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
