@@ -42,3 +42,5 @@ repor_cober %>%
 n_distinct(repor_cober$clave_captura)
 n_distinct(man_sec_nuevos)
 repor_cober %>% filter(tipo_de_formulario != "Generado") %>% dim()
+
+export(aux,"man_sec_no_enlistados_revision.xlsx")

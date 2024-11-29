@@ -40,7 +40,7 @@ marco_upm <- readRDS("D:/Omar/INEC/GIT/enighur_2024/insumos/02_muestra_upm/marco
 # -----------------------------------------------------------------------------
 
 ocupada %>% group_by(id_upm) %>% summarise(n()) %>% View()
-
+library(sampling)
 ocupada_muestra <- ocupada %>% filter(!id_upm %in% upm_inc$id_upm) %>% 
   left_join(codif_dpa,by = c("pro","can","par")) %>% 
   left_join(select(marco_upm,estrato,area,id_upm),by = "id_upm") %>% 
@@ -72,11 +72,14 @@ ocupada_muestra <- ocupada %>% filter(!id_upm %in% upm_inc$id_upm) %>%
                                zonal == "LITORAL" ~ 8,
                                zonal == "SUR" ~ 6, 
                                zonal == "CENTRO" ~ 3),
-         n_pm = ifelse(substr(n_pm,1,3) == "S/N" | is.na(n_pm),"S/N",n_pm),
+         n_pm = ifelse(substr(n_pm,1,3) == "S/N" | is.na(n_pm),"S-N",n_pm),
          jefehoga = paste0(primernjh," ",segundonjh," ",primerajh," ",segudonjh),
          jefehoga = ifelse(jefehoga == "NA NA NA NA","Sin Nombre",jefehoga),
          jefehoga = gsub(jefehoga,pattern = " NA | NA|NA |NN",replacement = " "),
          jefehoga = gsub(jefehoga,pattern = "  ",replacement = ""),
+         celular = ifelse(is.na(celular),"000",celular),
+         convencional = ifelse(is.na(convencional),"000",convencional),
+         n_via_p = gsub(n_via_p,pattern = "-",replacement = " "),
          jor = 1,
          sem = 1)
 
@@ -125,3 +128,6 @@ muestra_myc <- ocupada_muestra %>% select(no_orden = no_orden,
 
 export(muestra_myc, "productos/02_muestra_usm/muestra_myc.xlsx")
 
+muestra_myc %>% filter(is.na(pluscode)) %>% dim()
+
+muestra_myc %>% group_by(id_upm) %>% summarise(n() )%>% View()
