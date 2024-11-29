@@ -85,7 +85,7 @@ ocupada_muestra <- ocupada %>% filter(!id_upm %in% upm_inc$id_upm) %>%
 # -----------------------------------------------------------------------------
 
 ocupada_muestra %>% filter(is.na(n_pm)) %>% dim()
-
+ocupada_muestra %>% filter(is.na(pluscodes)) %>% dim()
 
 #ocupada_muestra %>% group_by(n_dom) %>% summarise(n()) %>% View()
 # -----------------------------------------------------------------------------
@@ -122,7 +122,6 @@ muestra_myc <- ocupada_muestra %>% select(no_orden = no_orden,
                                           semana = sem,# <- ojo
                                           telefono1 = celular,
                                           telefono2 = convencional) 
-export(muestra_myc, "muestra_myc.xlsx")
 
-muestra_myc %>% group_by(id_upm) %>% summarise(n()) %>% View()
-muestra_myc %>% select(jefehoga) %>% View()
+export(muestra_myc, "productos/02_muestra_usm/muestra_myc.xlsx")
+

@@ -26,7 +26,7 @@ base <- read_excel("insumos/03_enlistamiento/2024_11_28/BaseMuestralCompletaPara
          id_upm = upm,
          tot_hbt = as.numeric(tot_hbt))
 
-marco <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
+marco_upm <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
 # -----------------------------------------------------------------------------
 # Agregando la variable: zonal
 # -----------------------------------------------------------------------------
