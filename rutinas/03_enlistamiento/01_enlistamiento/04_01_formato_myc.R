@@ -40,6 +40,7 @@ marco_upm <- readRDS("D:/Omar/INEC/GIT/enighur_2024/insumos/02_muestra_upm/marco
 # -----------------------------------------------------------------------------
 
 ocupada %>% group_by(id_upm) %>% summarise(n()) %>% View()
+
 library(sampling)
 ocupada_muestra <- ocupada %>% filter(!id_upm %in% upm_inc$id_upm) %>% 
   left_join(codif_dpa,by = c("pro","can","par")) %>% 
@@ -73,6 +74,8 @@ ocupada_muestra <- ocupada %>% filter(!id_upm %in% upm_inc$id_upm) %>%
                                zonal == "SUR" ~ 6, 
                                zonal == "CENTRO" ~ 3),
          n_pm = ifelse(substr(n_pm,1,3) == "S/N" | is.na(n_pm),"S-N",n_pm),
+         #n_pm = gsub(n_pm,pattern = ".", replacement = " "),
+         #n_via_p = gsub(n_via_p,pattern = ".",replacement = " "),
          jefehoga = paste0(primernjh," ",segundonjh," ",primerajh," ",segudonjh),
          jefehoga = ifelse(jefehoga == "NA NA NA NA","Sin Nombre",jefehoga),
          jefehoga = gsub(jefehoga,pattern = " NA | NA|NA |NN",replacement = " "),
@@ -126,8 +129,49 @@ muestra_myc <- ocupada_muestra %>% select(no_orden = no_orden,
                                           telefono1 = celular,
                                           telefono2 = convencional) 
 
+muestra_myc <- muestra_myc %>% left_join(select(muestra_upm_man_sec_fondo_rot_004,
+                                 id_upm,
+                                 semana_n),by = "id_upm")
+
+muestra_myc <- muestra_myc %>% mutate(semana = semana_n)
+muestra_myc <- muestra_myc %>% select(-semana_n)
+dim(muestra_myc)
+# -----------------------------------------------------------------------------
+# 
+# -----------------------------------------------------------------------------
+
+muestra_upm_man_sec_fondo_rot_004 <- read_excel("muestra_upm_man_sec_fondo_rot_004.xlsx")
+
+muestra_upm_man_sec_fondo_rot_004 <- muestra_upm_man_sec_fondo_rot_004 %>% group_by(id_upm) %>% 
+  summarise(semana_n = unique(semana_nueva))
+
+
+
 export(muestra_myc, "productos/02_muestra_usm/muestra_myc.xlsx")
+
+sum(is.na(muestra_myc))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 muestra_myc %>% filter(is.na(pluscode)) %>% dim()
 
 muestra_myc %>% group_by(id_upm) %>% summarise(n() )%>% View()
+sum(is.na(muestra_myc$dominio))
+
+sum(is.na(muestra_myc))
+str(muestra_myc) %>% View()
+summary(muestra_myc)
