@@ -1,0 +1,206 @@
+---
+title: ""
+output:
+  pdf_document:
+    #toc: yes
+    #latex_engine: xelatex
+    df_print: kable
+    #number_sections: no
+header-includes:
+  - \usepackage{xcolor}
+  - \usepackage{graphicx}
+  - \usepackage{eso-pic}
+  - \definecolor{aliceblue}{rgb}{0.94, 0.97, 1.0}
+  - \definecolor{trueblue}{rgb}{0.0, 0.45, 0.81}
+  - \definecolor{tuftsblue}{rgb}{0.28, 0.57, 0.81}
+---
+
+```{=latex}
+\pagecolor{aliceblue}
+```
+
+```{=latex}
+\AddToShipoutPictureBG*{
+  \put(0,0){
+    \parbox[b][\paperheight]{\paperwidth}{
+      \vfill
+      \centering
+      \includegraphics[width=18cm,height=\paperheight,keepaspectratio]{fondo.png}
+      \vfill
+    }
+  }
+}
+
+```
+
+
+```{=latex}
+\thispagestyle{empty}
+
+\begin{titlepage}
+  \begin{center}
+    \vspace*{5cm}
+    
+    {\Huge\bfseries \textcolor{trueblue}{INFORME DE COBERTURA}   \par}
+    \vspace{0.2cm}
+    
+    {\Huge\bfseries \textcolor{trueblue} {ENIGHUR} \par}
+    \vspace{0.2   cm}
+    
+    {\Large\bfseries \textcolor{trueblue} {Periodo I} \par}
+    \vspace{1cm}
+    
+    {\Large  \textcolor{trueblue}{Dirección de Infraestructura Estadística y Muestreo \\ 
+    Gestión de Diseño Muestral}
+    \par}
+    \vspace{0.25cm}
+    
+    {\large  \textcolor{trueblue}{Omar LLambo} \par}
+    \vspace{0.25cm}
+    
+    %{\Large \textcolor{trueblue}{Abril 2025 } \par}
+    
+    \vfill
+    
+    {\large \textcolor{trueblue} {Abril - 2025}\par}
+    {\large \textcolor{trueblue} {Quito - Ecuador}\par}
+  \end{center}
+\end{titlepage}
+
+
+\newpage
+```
+
+```{r , include=FALSE}
+source("rutinas/05_cobertura/markdown/01_c_ocup.R")
+
+```
+
+\textcolor{trueblue}{\section{Descripción básica del Diseño Muestral}}
+
+El diseño muestral implementado en la Encuesta Nacional de Ingresos de Hogares Urbanos y Rurales (ENIGHUR) es un muestreo probabilístico bietápico estratificado de elementos. En la primera etapa, se selecciona una muestra estratificada de UPM con probabilidad proporcional al tamaño (PPT), donde la medida de tamaño de cada UPM está dada por el total de viviendas particulares ocupadas. Luego, se enlista la totalidad de viviendas que conforman cada UPM para, en una segunda etapa, seleccionar aleatoriamente un total fijo de 12 viviendas en cada UPM seleccionada. 
+
+Entre las principales características de la encuesta se presetan las sguientes: 
+
+ * La ENIGHUR tiene un tamaño muestral total de 3432 UPM distribuidas espacial y temporalmente.
+ * La encuesta está planificada a lo largo de trece periodos: Se levantan 264 UPM por periodo.
+ * Cada periodo está cosnitituido por cuatro semanas: En cada semana se levantan 66 UPM.
+
+\textcolor{trueblue}{\section{Control de cobertura de campo y muestral}}
+
+La cobertura hace referencia a la información obtenida en campo y proporcionada por los informantes de las viviendas seleccionadas. En el presente documento se realiza el seguimiento de la cobertura de acuerdo a los diferentes cortes de base de datos.
+
+En este sentido, la cobertura a nivel de UPM, vivienda y población objetivo toma en cuenta el resultado de la entrevista y la condición de ocupación de las viviendas visitadas, las cuales se clasifican en dos grandes grupos: elegibilidad conocida y elegibilidad desconocida, con la siguiente subclasificación:
+
+- **Elegibilidad conocida**
+
+  - Elegible respondiente (RE)
+    - Efectiva
+  - Elegible no respondiente (NR)
+    - Rechazo
+  - No elegibles (NE)
+    - Temporal
+    - Desocupada
+    - En construcción
+    - Inhabitable o destruída
+    - Convertida en negocio
+    - Sin niños menoras a 5 años
+    - Otra razón, cuál?
+
+- **Elegibilidad desconocida**
+  
+  - Elegibilidad desconocida (ED)
+    - Nadie en casa
+
+
+
+## Tasas de conformidad
+
+Tomando en cuenta tanto la clasificación como la subclasificación de las viviendas investigadas, se calculan las siguientes tasas de conformidad:
+
+- Tasa de respondientes ($T_{RE}$)
+
+Esta tasa permite conocer la proporción de viviendas efectivas para el total de viviendas visitadas.
+
+$$T_{RE} = \frac{RE}{RE + NR + NE + ED}$$
+
+- Tasa de no respondientes ($T_{NR}$)
+
+Esta tasa permite conocer la proporción de viviendas elegibles no efectivas para el total de viviendas visitadas.
+
+$$T_{NR} = \frac{NR}{RE + NR + NE + ED}$$
+
+- Tasa de no elegibles ($T_{NE}$)
+
+Esta tasa permite conocer la proporción de viviendas no elegibles que formaron parte de la muestra y que, en un principio, no deberían haber formado parte del marco de muestreo.
+
+$$T_{NE} = \frac{NE}{RE + NR + NE + ED}$$
+
+- Tasa de elegibilidad desconocida ($T_{ED}$). 
+
+Esta tasa permite conocer la proporción de viviendas cuya condición de elegibilidad no pudo ser determinada en campo.
+
+$$T_{ED} = \frac{ED}{RE + NR + NE + ED}$$
+A continuación se presenta el análisis de las tasas de conformidad a nivel de UPM, vivienda y población objetivo.
+
+## Tasas de conformidad a nivel de vivienda
+
+En la Tabla 1 podemos apreciar el detalle de la condición de ocupación y el resultado de la entrevista. Esta información es de suma importancia debido a que conforma el insumo para el calculo de las tasas de coformodidad.
+
+$$\textbf{Tabla 1:}\text{ Condición de ocupación y resultado de entrevista}$$
+\vspace{-8truemm}
+```{r echo=F, message=F, warning=F}
+c_ocup
+```
+\vspace{-5truemm}
+
+\newpage
+
+## Tasas de conformidad a nivel de provincia
+
+Analizamos cada provincia para revisar el comportamiento de conformidad de las viviendas.
+
+
+$$\textbf{Gráfico 1:}\text{ Tasa de conformidad a nivel de provincia}$$
+\vspace{-8truemm}
+```{r echo=F, fig.width=7, fig.height=5,message=F, warning=F}
+graf_tasas_prov 
+```
+\vspace{2.0truemm}
+
+## Tasas de conformidad a nivel de zonal
+
+Con el objetivo de evaluar el comportamiento de conformidad a nivel de cada coordinación zonal, se preseenta el siguiente gráfico.
+
+$$\textbf{Gráfico 2:}\text{ Tasa de conformidad a nivel de coordinación zonal}$$
+
+```{r echo=F,  fig.width=7, fig.height=1.8, message=F, warning=F}
+graf_tasas_zon
+
+```
+\newpage
+
+## Tasas de conformidad a nivel de UPM
+
+Cada UPM tiene asociada una tasa de respondientes ($T_{RE}$) que nos permite conocer la poroporción de viviendas efectivas. En ese sentido, a continuación contabilizamos la cantidad de UPM acorde su $T_{RE}$.
+
+
+$$\textbf{Gráfico 3:}\text{ Tasa de conformidad a nivel de UPM}$$
+
+```{r echo=F, fig.width=7, fig.height=3, message=F, warning=F}
+graf_tasas_upm
+```
+
+
+
+## Tasas de conformidad a por periodo
+
+Se presenta la infromación de las tasas de coformidad en cada periodo.
+
+$$\textbf{Gráfico 4:}\text{ Tasa de conformidad por periodo}$$
+```{r echo=F, fig.width=7, fig.height=4.0, message=F, warning=F}
+
+graf_tasas_per
+
+```
+

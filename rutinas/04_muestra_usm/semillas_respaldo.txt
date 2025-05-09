@@ -1,0 +1,26 @@
+# ----------------------------------
+Semilla de cada periodo
+# ----------------------------------
+
+Periodo 2: set.seed(20241226)
+mutate(grupo = as.character(gr_1))
+
+
+Periodo 3: fecha <- "2025_01_21"
+set.seed(as.numeric(gsub(fecha,pattern = "_",replacement = ""))) 
+
+
+Periodo 4: fecha <- "2025_02_17" 
+set.seed(as.numeric(gsub(fecha,pattern = "_",replacement = ""))) 
+
+
+Periodo 5: fecha <- "2025_03_17" 
+set.seed(as.numeric(gsub(fecha,pattern = "_",replacement = ""))) 
+
+
+Periodo 6: fecha <- "2025_04_11"
+set.seed(as.numeric(gsub(fecha,pattern = "_",replacement = ""))) 
+
+
+Periodo 7: fecha <- "2025_05_06"
+set.seed(as.numeric(gsub(fecha,pattern = "_",replacement = ""))) 

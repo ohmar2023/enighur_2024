@@ -1,0 +1,6 @@
+/insumos/00_geo_shapes/BNCPV22.gpkg
+/insumos/02_muestra_upm/pobl_machala/poblacion2022_machala.rds
+/insumos/03_enlistamiento/periodo_01/2024_12_11/enighur_j2.gpkg
+/insumos/03_enlistamiento/periodo_01/2024_12_13/enighur_j2.gpkg
+/insumos/99_marco_viv_precenso/marco_viv_ocu_nap.rds
+/TinyTeX.zip

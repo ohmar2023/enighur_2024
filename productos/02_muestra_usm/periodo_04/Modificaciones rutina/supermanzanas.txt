@@ -1,0 +1,10 @@
+# Esto soluciona el hecho de que no existe un grupo para la UPM 080150018101
+# ya que esta manzana desapareció y se dividió en dos.
+# Esto se elabró para el periodo 04.
+
+# marco_viv_superman <- marco_viv_superman %>% 
+#   mutate( aux = row_number(),
+#           grupo = case_when(id_upm == "080150018101" & aux <= 92 ~ 1, 
+#                             id_upm == "080150018101" & aux > 92 & aux <= 183 ~ 2,
+#                             TRUE ~ grupo)) %>% 
+#   select(-aux)

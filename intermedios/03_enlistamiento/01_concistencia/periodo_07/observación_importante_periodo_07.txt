@@ -1,0 +1,14 @@
+
+En este periodo se tuvo un caso atípico entorno a las supermanzanas, se tuvo un conglomerado "supermanzana"
+que tiene dos UPM y estas dos UPM fueron seleccionadas en la muestra. Las UPM involucradas son:
+ - 110150006302: Esta UPM no aparece en la base de actualziación cartografica.
+ - 110150006301: Esta si aparece.
+Desde cartografia indican que como ambas tienen las mismas man_sec, en su base solo ponen el id de la UPM 110150006302.
+
+En este caso no se debe identificar la UPM 110150006302 como no actualziada, porque eso seria un error en la selcción. 
+Esto se debe cuidar en el archivo intermedio "incon_man_sec_upm_periodo_07.xlsx", ya que desde el código reportará
+como que fuese una UPM no actualziada, por lo que el algoritmo buscará información en la base del CENSO-2022, cuando 
+se debería buscar en la misma base de actualziación disponible. 
+
+En lo que respecta al proceso de selección, se corre el algoritmo y se identifica mediante los ids de edificio
+donde empieza y donde termina cada UPM.   

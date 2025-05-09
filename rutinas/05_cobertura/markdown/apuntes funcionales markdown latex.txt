@@ -1,0 +1,63 @@
+
+# -------------------------------------------------------
+# COLOR DE FONDO EN TODAS LAS HOJAS
+# -------------------------------------------------------
+
+header-includes:
+  - \usepackage{xcolor}
+  - \definecolor{aliceblue}{rgb}{0.94, 0.97, 1.0}
+
+```{=latex}
+\pagecolor{aliceblue}
+```
+
+
+# -------------------------------------------------------
+# IMAGEN DE FONDO LATEX MARKDOWN - FUNCIONAL
+# -------------------------------------------------------
+
+ header-includes:
+  - \usepackage{graphicx}
+  - \usepackage{eso-pic}
+
+```{=latex}
+\AddToShipoutPictureBG*{
+  \AtPageCenter{
+    \includegraphics[width = 1.4\paperwidth]{fondo.png}
+  }
+}
+```
+
+# -------------------------------------------------------
+# PALABRA MARCA DE AGUA DE FONDO LATEX MARKDOWN - FUNCIONAL
+# -------------------------------------------------------
+
+header-includes:
+  - \usepackage{draftwatermark}
+
+```{=latex}
+\SetWatermarkText{DINEM}
+\SetWatermarkScale{2.0}
+\SetWatermarkColor[gray]{0.85}
+```
+# -------------------------------------------------------
+# ASi seria para poner fondo en todas las paginas (no me funciona)
+# -------------------------------------------------------
+
+---
+title: "Documento con fondo en todas las páginas"
+author: "Tu nombre"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    keep_tex: true
+header-includes:
+  - \usepackage{eso-pic}
+  - \usepackage{graphicx}
+  - \AddToShipoutPictureBG*{%
+      \AtPageLowerLeft{%
+        \includegraphics[width=\paperwidth,height=\paperheight]{fondo.jpg}%
+      }%
+    }
+---

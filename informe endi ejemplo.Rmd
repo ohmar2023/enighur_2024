@@ -1,0 +1,411 @@
+---
+title: Reporte de validación de la base de datos de la Encuesta Nacional de Desnutrición
+  Infantil (ENDI).
+output:
+  pdf_document:
+    toc: yes
+    df_print: kable
+    number_sections: yes
+  html_document:
+    number_sections: yes
+    toc: yes
+    theme: bootstrap
+    highlight: tango
+    df_print: kable
+params:
+  mes: NULL
+header-includes: \renewcommand{\contentsname}{Contenido}
+---
+
+---
+subtitle: Dirección de Infraestructura Estadística y Muestreo - Gestión de Diseño Muestral
+author: Angel Gaibor, Javier Núñez, Giovanella Peña
+date: `r Sys.Date()`
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+
+mese <- params$mes
+
+bdd <- bdd %>% 
+  separate(piso_n, into = c("piso1", "piso2"),
+           sep = "-", remove = F) %>% 
+  mutate(inc_piso_n = ifelse(otros != "Sin Edificación" & piso_n == "", 1, 
+                      ifelse(otros != "Sin Edificación" & (!piso1 %in% 1:99), 1,
+                      ifelse(otros != "Sin Edificación" & (!piso2 %in% 1:99) & !is.na(piso2), 1,  
+                      ifelse(otros != "Sin Edificación" & piso2 <= piso1 & !is.na(piso2), 1,0))))) %>% 
+  filter(mes == mese)
+
+# es probable que se deba modificar este filtro (mes) en funcion a la estructura de la base de seguimiento de DICA
+muestra <- muestra %>% 
+  filter(mes == mese)
+```
+
+# Antecedentes
+
+La ENDI es una operación estadística de periodicidad anual, que tiene como objetivo medir los datos de desnutrición crónica, desnutrición aguda, desnutrición global, sobrepeso y obesidad, controles prenatales, vacunación oportuna de neumococo y rotavirus, anemia, lactancia materna, consumo de hierro y ácido fólico en el embarazo, entre otros.
+
+La encuesta sigue un diseño muestral bietápico de elementos. En la primera etapa, se seleccionaron 2.964 unidades primarias de muestreo (UPM), es decir, cada mes se investigaran 247 UPM distribuidas espacial y temporalmente. Es necesario mencionar, que para la Provincia de Galápagos debido a su naturaleza se empleará una estrategia diferente, por lo que en la actualidad se están investigando 238 UPM mensualmente.
+
+Para la segunda etapa se seleccionan 8 viviendas con niños menores a 5 años por UPM, sin embargo, existirán UPM que no cuentan con la cuota necesaria, por lo que se seleccionará el total de viviendas disponibles con niños menores a 5 años. Por cada UPM con este inconveniente se seleccionará una vivienda adicional en una UPM que tenga las mismas características y que sea parte de la muestra.
+
+Con el fin de garantizar la selección de viviendas que tengan población objetivo se incorporó un proceso inicial que consiste en realizar una actualización cartográfica (enlistamiento) previo al levamentiento de información, dicho proceso, se lo realizará dos meses antes del inicio de cada levantamiento.
+
+Para la selección de las UPM se utilizó el marco de muestreo vigente, por lo cual, su cartografía asociada corresponde a la determinada por el CPV 2010. Para cada área geográfica asociada a cada UPM se identificó su correspondencia según el precenso 2019-2021. De esta manera, se actualizarán las manzanas o las secciones de sectores dispersos del precenso 2019-2021 con correspondencia a la muestra seleccionada.
+
+Tomando en cuenta lo antes mencionado, la encuesta cada tres meses tendrá una representatividad **nacional referencial**, cada seis meses arrojará resultados a nivel **nacional, urbano y rural**; y, cada doce meses se obtendrán resultados **nacional, urbano, rural y provincial**.
+
+Este informe tiene como objetivo evidenciar la consistencia de las variables de identificación geográfica, además, de analizar el número de viviendas por UPM que tienen la población objetivo de acuerdo al enlistamiento, ya que posterior a este proceso de actualización cartográfica se seleccionaron las 8 viviendas que se investigarán.
+
+# Descripción de la base de datos
+
+**Fecha del corte de las bases de datos:** `r as.Date(fecha,"%Y%m%d")` .
+
+**Total de registros de la base de datos de enlistamiento:** `r dim(bdd)[1]`.
+
+**Total de variables en la base de datos de enlistamiento:** `r dim(bdd)[2] - 4`.
+
+El listado de viviendas corresponden a las UPM enlistadas para las dos jornadas correspondientes el mes `r mese`, en el mismo constan viviendas con las diferentes condiciones de ocupación como se puede observar en la siguiente tabla:
+
+```{r echo=F, message=F, warning=F, results='markup'}
+
+# creacion de las regionales
+bdd %>% 
+  mutate(Regional = ifelse(pro == "04" | pro == "08" | pro == "10" | 
+                             pro == "21" | pro == "17", "Administracion_Central",
+                           ifelse(pro == "13" | pro == "23" | pro == "09" |
+                                    pro == "12" | pro == "20" | pro == "24", "Litoral",
+                                  ifelse(pro == "02" | pro == "15" | pro == "22" | pro == "05" |
+                                           pro == "06" | pro == "16" | pro == "18", "Centro", "Sur"))),
+         c_ocup = ifelse(is.na(c_ocup), "Sin_vivienda", c_ocup)) %>%
+  filter(!is.na(Regional)) %>% 
+  group_by(Regional, c_ocup) %>% 
+  summarise(condicion = n()) %>% 
+  pivot_wider(names_from = c_ocup, values_from = condicion) %>% 
+  select(Colectiva, Desocupada = "Particular - Desocupada", 
+         En_construccion = "Particular - En Construcción", 
+         Ocupada = "Particular - Ocupada", 
+         Temporal = "Particular - Temporal", Sin_vivienda) %>% 
+  ungroup() %>% 
+  mutate(Total = Colectiva + Desocupada + En_construccion + Ocupada + Temporal + Sin_vivienda) %>%
+  pivot_longer(names_to = "Condición", values_to = "freq", cols = -Regional) %>% 
+  pivot_wider(names_from = Regional, values_from = freq) %>% 
+  mutate(Total = Administracion_Central + Litoral + Centro + Sur)
+
+ocupado <- bdd %>% 
+  filter(c_ocup == "Particular - Ocupada")
+
+```
+
+Para realizar las diferentes investigaciones en campo de las encuestas de hogares, las viviendas que serán seleccionadas son aquellas cuya condición de ocupación es *"Particular - Ocupada"*, debido a que se obtiene la ubicación geográfica de las viviendas. Para este caso en particular se obtuvieron `r length(ocupado$pro)` viviendas ocupadas. En la siguiente tabla se realiza un control de las variables de ubicación geográfica, es decir, que no tengan valores perdidos y que se encuentren en los rangos permitidos, lo que garantiza ubicar en campo a las diferentes viviendas:
+
+<!-- , , sin embargo, para este caso en particular es determinante ubicar las viviendas que tienen la población objetivo (niños menores a cinco años), para posteriormente seleccionar las ocho viviendas que serán investigadas. -->
+
+```{r echo=F, message=F, warning=F, results='markup'}
+
+rbind(bdd %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(pro)),
+            Perdidos = sum(is.na(pro)),
+            Inconsistentes = sum(!(as.numeric(pro) %in% 1:24))) %>% 
+        mutate(Variable = "pro"),
+      bdd %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(can)),
+            Perdidos = sum(is.na(can)),
+            Inconsistentes = sum(!(as.numeric(can) %in% 1:99))) %>% 
+        mutate(Variable = "can"),
+      bdd %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(par)),
+            Perdidos = sum(is.na(par)),
+            Inconsistentes = sum(!(as.numeric(par) %in% 50:99))) %>% 
+        mutate(Variable = "par"),
+      bdd %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(zon)),
+            Perdidos = sum(is.na(zon)),
+            Inconsistentes = sum(!(as.numeric(zon) %in% 1:999))) %>% 
+        mutate(Variable = "zon"),
+      bdd %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(sec)),
+            Perdidos = sum(is.na(sec)),
+            Inconsistentes = sum(!(as.numeric(sec) %in% 1:999))) %>% 
+        mutate(Variable = "sec"),
+      bdd %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(man != "000"),
+            Perdidos = sum(man == "000"),
+            Inconsistentes = sum(!(as.numeric(man) %in% 0:999))) %>% 
+        mutate(Variable = "man"),
+      bdd %>%
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(n_loc != "000"),
+            Perdidos = sum(n_loc == "000"),
+            Inconsistentes = sum(!(as.numeric(n_loc) %in% 0:999))) %>% 
+  mutate(Variable = "n_loc"),
+      bdd %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(n_edif)),
+            Perdidos = sum(is.na(n_edif)),
+            Inconsistentes = sum(!(as.numeric(n_edif) %in% 1:999 | is.na(n_edif)) )) %>% 
+        mutate(Variable = "n_edif"),
+      bdd %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum((as.numeric(n_viv) %in% 1:999)),
+            Perdidos = sum(is.na(n_viv)),
+            Inconsistentes = sum(!(as.numeric(n_viv) %in% 1:999 | is.na(n_viv)) )) %>% 
+        mutate(Variable = "n_viv"),
+      bdd %>% 
+        filter(c_ocup == "Particular - Ocupada") %>%
+        summarise(Validos = sum(!is.na(piso_n) & piso_n != "NULL"),
+            Perdidos = sum(is.na(piso_n) | piso_n == "NULL"),
+            Inconsistentes = sum(inc_piso_n, na.rm = T)) %>% 
+        mutate(Variable = "piso_n")) %>% 
+  select(Variable, `Válidos` = Validos, Perdidos, Inconsistentes)
+
+```
+
+Como se puede observar existen `r sum(ocupado$inc_piso_n)` viviendas que tienen inconsistencias en la variable piso, adicional, existen `r sum(!(as.numeric(ocupado$n_viv) %in% 1:999 | is.na(ocupado$n_viv)))` viviendas que tienen registrado un número de vivienda incoherente.
+
+Por otro lado, las viviendas ocupadas se clasifican en tres categorías: tiene niño, no tiene niño, y las vivendas que no se puede determinar si tiene o no niño (elegibilidad desconocida). Para clasificarlas, se utilizó los valores de la variable "Primer nombre", debido a que allí se ha registrado el resultado de la entrevista del enlistamiento y se obtuvieron los siguientes resultados:
+
+```{r echo=F, message=F, warning=F, results='markup'}
+
+ocupado <- ocupado %>%
+  mutate(n0a5 = cero_dos + dos_cinco,
+         control_nombre = ifelse(substr(primernjh, 1, 5)== "nadie", "Nadie en casa",
+                                 ifelse(primernjh == "rechazo", "Rechazo",
+                                        ifelse(primernjh == "nn", "Sin Nombre", "Con nombre"))),
+         tipo = ifelse(n0a5 > 0, "Tiene niño",
+                       ifelse(control_nombre != "Con nombre", control_nombre, "No tiene niño")),
+         c_hbt = ifelse(n0a5 >= n_hbt, 1, 0))
+
+ocupado %>% 
+  group_by(`Campo nombre` = control_nombre, tipo) %>% 
+  summarise(n=n()) %>% 
+  pivot_wider(names_from = tipo, values_from = n) %>% 
+  replace(is.na(.), 0)
+
+```
+
+Para el caso de la ENDI, se trabaja netamente con los viviendas que tienen niños menores a cinco años, como se puede observar existen `r sum(ocupado$tipo == "Tiene niño")` viviendas que cumplen con esa condición. Es importante recalcar que la información que es recolectada por un informante indirecto debe ser mínima (`r sum(ocupado$tipo == "Tiene niño" & ocupado$control_nombre != "Con nombre")` viviendas), ya que es necesario conocer la edad del niño o niña que existe dentro de la vivienda.
+
+De igual manera las viviendas cuyo resultado de entrevista es Rechazo, Nadie en casa o Sin nombre, representan el `r round(sum(ocupado$control_nombre != "Con nombre")/(dim(ocupado)[1])*100,1)`% del total de viviendas ocupadas, en estas viviendas no se puede determinar si existe o no la población objetivo; por este motivo es necesario el control a lo largo del enlistamiento.
+
+## Control sobre viviendas elegibles
+
+A partir del total de viviendas elegibles es: `r sum(ocupado$n0a5>0)`, se realizó un cruce de las variables del *total de niños de 0 a 2 años* (filas) versus *total de niños 3 a 5 años* (columnas) y se obtuvo el siguiente resultado:
+
+```{r echo=F, message=F, warning=F, results='markup'}
+ocupado %>% 
+  filter(n0a5>0) %>% 
+  group_by(cero_dos, dos_cinco) %>% 
+  summarise(n=n()) %>% 
+  arrange(dos_cinco) %>% 
+  pivot_wider(names_from = dos_cinco, values_from = n) %>% 
+  rename(`0 a 2 años / 3 a 5 años` = cero_dos) %>% 
+  replace(is.na(.), 0) %>% 
+  arrange(`0 a 2 años / 3 a 5 años`)
+```
+
+Además, se realizó el cruce de las variables *total de personas* (filas) versus *total de niños de 0 a 5 años* (columnas):
+
+```{r echo=F, message=F, warning=F, results='markup'}
+ocupado %>% 
+  filter(n0a5 > 0) %>% 
+  group_by(n_hbt, n0a5) %>% 
+  summarise(n = n()) %>% 
+  arrange(n0a5) %>% 
+  pivot_wider(names_from = n0a5, values_from = n) %>% 
+  mutate(n_hbt = as.numeric(n_hbt)) %>% 
+  rename(`Total personas / 0 a 5 años` = n_hbt) %>% 
+  replace(is.na(.), 0) %>% 
+  arrange(`Total personas / 0 a 5 años`)
+  # select(1, 2, 5, 3, 6, 7, 9, 4, 8)
+```
+
+En la tabla anterior se obtuvieron `r sum(ocupado$n_hbt <= ocupado$n0a5)` viviendas que tienen mayor número de niños menores a cinco años respecto al número total de personas registradas en la vivienda.
+
+# Resultados del enlistamiento a nivel de UPM
+
+## A nivel de provincia
+Dada la desactualización del marco de muestreo, es esperado tener una diferencia considerable el total de viviendas entre el marco y el enlistamiento. A continuación se presenta una tabla resumen del porcentaje de crecimiento reportado a nivel de provincia y área (considerando solamente las UPM enlistadas).
+
+```{r echo=F, message=F, warning=F, results='markup'}
+ocupado %>% 
+  group_by(pro, id_upm, mes) %>% 
+  summarise(viv_act = n(),
+            viv_nin = sum(n0a5>0)) %>%
+  filter(!is.na(id_upm)) %>% 
+  left_join(marco, by = "id_upm") %>% 
+  filter(!is.na(id_upm)) %>% 
+  group_by(pro, area) %>% 
+  summarise(viv = sum(viv),
+            viv_act = sum(viv_act)) %>% 
+  mutate(delta = round((viv_act/viv-1)*100, 1),
+         area = ifelse(area=="1", "Urbano", "Rural")) %>% 
+  select(-viv, -viv_act) %>% 
+  rename(Provincia = pro) %>% 
+  pivot_wider(names_from = area, values_from = delta)
+```
+
+## A nivel de UPM
+
+Al agregar la base de enlistamiento a nivel de UPM, existe al menos una vivienda ocupada en `r n_distinct(ocupado$id_upm, na.rm = TRUE)` de las `r 238` UPM esperadas para el mes `r mese`. Por otro lado, `r sum(is.na(ocupado$id_upm))` viviendas de las `r dim(ocupado)[1]` viviendas ocupadas totales no se les pudo asignar a una UPM, esto representa el `r round(sum(is.na(ocupado$id_upm)) / dim(ocupado)[1]*100, 2)`%.
+
+<!-- Las UPM que no se han levantado hasta el momento son los siguientes:  -->
+<!-- ```{r echo=F, message=F, warning=F, results='markup'} -->
+<!-- m_upm <- muestra %>%  -->
+<!--   filter(mes <= 3) %>%  -->
+<!--   select(UPM = id_upm, Sector_Manzana_2010 = man_sec_10) %>%  -->
+<!--   group_by(UPM, Sector_Manzana_2010) %>%  -->
+<!--   summarise() -->
+<!-- c_upm <- ocupado %>%  -->
+<!--   filter(!is.na(id_upm)) %>% -->
+<!--   select(UPM = id_upm) %>%  -->
+<!--   group_by(UPM) %>% -->
+<!-- summarise() -->
+<!-- m_upm %>%  -->
+<!--   anti_join(c_upm, by = "UPM") %>%  -->
+<!--   group_by(UPM) %>%  -->
+<!--   summarise() -->
+<!-- ``` -->
+
+A continuación se presenta el gráfico de número de viviendas ocupadas por UPM según el marco de muestreo vs número de viviendas ocupadas por UPM según el enlistamiento (la línea negra punteada representa la igualdad en el número de viviendas del marco y el enlistamiento):
+
+```{r echo=F, message=F, warning=F, results='markup'}
+ocupado %>% 
+  group_by(id_upm) %>% 
+  summarise(viv_act = n()) %>%
+  filter(!is.na(id_upm)) %>% 
+  left_join(marco, by = "id_upm") %>% 
+  filter(!is.na(id_upm)) %>% 
+  rename(`Área` = area) %>% 
+  ggplot(aes(viv, viv_act)) + 
+  geom_point(aes(colour = `Área`)) +
+  geom_abline(intercept = 0, slope = 1,linetype = "dashed") +
+  labs(x = "Número de viviendas según el marco",
+       y = "Número de viviendas según enlistamiento") +
+  theme(aspect.ratio = 1/1.10 ,
+        panel.background = element_rect(fill = "#E4E3DB",
+                                        colour = "#E4E3DB",
+                                        size = 0.5, linetype = "solid"),
+        panel.grid.minor = element_blank(),
+        strip.background = element_rect(fill="white"),
+        axis.title = element_text(size=8),
+        axis.text = element_text(size=7),
+        axis.ticks = element_blank(),
+        legend.direction = "horizontal", 
+        legend.position = "bottom",
+        legend.box = "vertical",
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 7),
+        legend.box.spacing = unit(0, "cm"),
+        legend.title.align = 0.5) +
+  coord_fixed() +
+  scale_y_continuous( breaks = seq(0, 1000, 100)) +
+  scale_y_continuous( breaks = seq(0, 1000, 100))
+```
+
+Como se pudo observar, existe una marcada variación del cambio número de viviendas ocupadas tendiendo a la alza, principalmente en el área urbana. En cuanto al total de viviendas versus total de viviendas con niños menores a cinco años, se presenta el siguiente gráfico. De las `r n_distinct(ocupado$id_upm, na.rm = T)` UPM presentes en la base de enlistamiento `r dim(ocupado %>% group_by(id_upm) %>% summarise(viv_nin = sum(n0a5 > 0)) %>% filter(viv_nin < 8))[1]` tienen menos de 8 viviendas con niños menores a cinco años, es decir el `r round( (dim(ocupado %>% group_by(id_upm) %>% summarise(viv_nin = sum(n0a5 > 0)) %>% filter(viv_nin < 8))[1]) / n_distinct(ocupado$id_upm, na.rm = T) *100, 2 )`%.
+
+```{r echo=F, message=F, warning=F, results='markup'}
+ocupado %>% 
+  group_by(id_upm, mes) %>% 
+  summarise(viv_act = n(),
+            viv_nin = sum(n0a5>0)) %>%
+  filter(!is.na(id_upm)) %>% 
+  left_join(marco, by = "id_upm") %>% 
+  filter(!is.na(id_upm)) %>% 
+  mutate(mes = paste0("Mes ",as.character(mes))) %>% 
+  rename(`Área` = area) %>% 
+  ggplot(aes(viv_act, viv_nin)) + 
+  geom_point(aes(colour = `Área`)) +
+  geom_hline(yintercept = c(8,20), linetype = "dashed") +
+  annotate("text", x = 10, y = 8, vjust = -0.35, hjust = 0.10, label = " 8 viv",  size = 3) +
+  annotate("text", x = 10, y = 20, vjust = -0.35, hjust = 0.10, label = "20 viv",  size = 3) +
+  labs(x = "Número de viviendas ocupadas",
+       y = "Número de viviendas con niños") +
+  theme(panel.background = element_rect(fill = "#E4E3DB",
+                                        colour = "#E4E3DB",
+                                        size = 0.5, linetype = "solid"),
+        panel.grid.minor = element_blank(),
+        strip.background = element_rect(fill="white"),
+        axis.title = element_text(size=8),
+        # axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.direction = "horizontal", 
+        legend.position = "bottom",
+        legend.box = "vertical",
+        legend.title = element_text(size=8),
+        legend.text = element_text(size=7),
+        legend.box.spacing = unit(0, "cm"),
+        legend.title.align = 0.5)
+  # coord_fixed() +
+  # scale_size(range = c(2,9))
+  # scale_x_log10() + 
+  # scale_y_log10()
+```
+```{r echo=F, message=F, warning=F, results='markup'}
+ocupado_upm <- ocupado %>% 
+  mutate(re = ifelse(control_nombre %in% c("Con nombre", "Sin Nombre"), 1, 0),
+         nr = ifelse(control_nombre == "Rechazo", 1, 0),
+         ed = ifelse(control_nombre == "Nadie en casa", 1, 0)) %>% 
+  group_by(pro, id_upm) %>% 
+  summarise(viv_act = n(),
+            viv_re = sum(re),
+            viv_nr = sum(nr),
+            viv_ed = sum(ed)) %>%
+  mutate(viv_nr_ed = (viv_nr + viv_ed)/viv_act) %>% 
+  filter(!is.na(id_upm)) %>% 
+  left_join(marco, by = "id_upm") %>% 
+  filter(!is.na(id_upm))
+```
+
+A pesar que el porcentaje de viviendas rechazo y nadie en casa a nivel nacional se encuentra en los rangos esperados, es importante comprobar si existe concentración en algunas UPM. Al analizarlo, se aprecia que `r dim(filter(ocupado_upm, viv_nr_ed > 0.10))[1]` UPM tienen una proporción de viviendas rechazo y nadie en casa superior a 10%, (`r dim(filter(ocupado_upm, viv_nr_ed > 0.10 & area ==1))` de ellas urbanas). A continuación se presenta un gráfico donde se puede apreciar la relación entre el total de viviendas y el porcentaje de las mismas con observaciones y el listado de UPM que superan el umbral.
+
+```{r echo=F, message=F, warning=F, results='markup'}
+ocupado_upm %>% 
+  rename(`Área` = area) %>% 
+  ggplot(aes(viv_act, viv_nr_ed)) + 
+  geom_point(aes(colour = `Área`)) +
+  geom_abline(slope = 0.00, intercept = 0.05, linetype = "dashed") +
+  geom_abline(slope = 0.00, intercept = 0.10, linetype = "dashed") +
+  annotate("text", x = 0, y = 0.10, vjust = -0.35, hjust = -0.10, label = "10%",  size = 3) +
+  annotate("text", x = 0, y = 0.05, vjust = -0.35, hjust = -0.10, label = "5%",  size = 3) +
+  labs(x = "Número de viviendas ocupadas",
+       y = "Viviendas rechazo y nadie en casa (%)") +
+  theme(panel.background = element_rect(fill = "#E4E3DB",
+                                        colour = "#E4E3DB",
+                                        size = 0.5, linetype = "solid"),
+        panel.grid.minor = element_blank(),
+        strip.background = element_rect(fill="white"),
+        axis.title = element_text(size=8),
+        # axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.direction = "horizontal", 
+        legend.position = "bottom",
+        legend.box = "vertical",
+        legend.title = element_text(size=8),
+        legend.text = element_text(size=7),
+        legend.box.spacing = unit(0, "cm"),
+        legend.title.align = 0.5)
+```
+
+
+```{r echo=F, message=F, warning=F, results='markup'}
+ocupado_upm %>% 
+  filter(viv_nr_ed > 0.1) %>% 
+  mutate(viv_nr_ed = round(viv_nr_ed*100, 1),
+         zonal = case_when(pro %in% c("08", "04", "10", "21", "17") ~ "CZ1",
+                           pro %in% c("13", "23", "09", "12", "24", "20") ~ 'CZ2',
+                           pro %in% c("02", "15", "22", "16", "05", "18", "06") ~ "CZ3",
+                           pro %in% c("01", "03", "14", "07", "11", "19") ~ "CZ4",
+                           T ~ "LOL")) %>% 
+  arrange(pro, desc(viv_nr_ed)) %>% 
+  select(Zonal = zonal, Provincia = pro, `Área` = area, UPM = id_upm, `Viv. ocupadas`= viv_act, `Viv. novedades (%)` = viv_nr_ed)
+```
