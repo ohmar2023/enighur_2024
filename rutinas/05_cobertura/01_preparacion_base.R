@@ -1,8 +1,8 @@
 
+rm(list = ls())
+
 source("rutinas/99_librerias/librerias.R")
 source("rutinas/99_librerias/read_zip.R")
-
-rm(list = ls())
 
 # -----------------------------------------------------------------------------
 # Lectura de la base de cobertura: Necesitamos indicar el periodo
