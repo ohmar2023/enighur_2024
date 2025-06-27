@@ -1,6 +1,6 @@
 
 # -----------------------------------------------------------------------------
-# Este script compila los demás. Se requieren param de periodo y fecha
+# Este script compila los demás. Se requieren parametros de periodo y fecha
 # -----------------------------------------------------------------------------
 
 rm(list = ls())
@@ -11,15 +11,15 @@ source("rutinas/99_librerias/librerias.R")
 # Parámetros
 # -----------------------------------------------------------------------------
 
-periodo <- 7
+periodo <- 9
 # año/mes/dia
-fecha <- "2025_05_06"
+fecha <- "2025_06_27"
 
 # -----------------------------------------------------------------------------
 # script: 01_1_preparacion_bdd.R
 # Este script llama las bases de datos del enlistamiento: 
 # - Base_muestral__ XXXXXXXX_xxxxxxx.csv: Base alfanumerica del enlistamiento
-# - nac_enighur_xx.gpkg: Base geografica para sacar los pluscode. Nios envian y hay que descomprimir. 
+# - nac_enighur_xx.gpkg: Base geografica para sacar los pluscode. Nos envian y hay que descomprimir. 
 # Retorna: base.rds, esta base es la base alfanumerica lista para usarse
 # -----------------------------------------------------------------------------
 
@@ -43,3 +43,7 @@ source("rutinas/03_enlistamiento/02_1_novedades.R")
 # -----------------------------------------------------------------------------
 
 source("rutinas/03_enlistamiento/02_2_novedades.R")
+
+
+
+

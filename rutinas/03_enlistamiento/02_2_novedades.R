@@ -17,10 +17,10 @@ muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_006.xl
 # Lectura base de correspondencia y novedades - DICA
 # -----------------------------------------------------------------------------
 
-ruta_corr <- paste0("D:\\OMAR LLAMBO\\enighur_2024\\insumos\\03_enlistamiento\\periodo_", periodo)
+ruta_corr <- paste0("insumos/03_enlistamiento/periodo_", periodo)
 n_base_corr <- dir(ruta_corr)[grepl(dir(ruta_corr),pattern = "esumen|orrespon")]
 
-correspondencia <- read_excel(paste0(ruta_corr,"\\",n_base_corr)) %>% 
+correspondencia <- read_excel(paste0(ruta_corr,"/",n_base_corr)) %>% 
   clean_names() %>% 
   rename(id_upm = upm)
 
@@ -36,9 +36,11 @@ man_sec_nuevos <- muestra %>% filter(periodo_nuevo == as.numeric(periodo)) %>%
   group_by(id_upm,man_sec) %>% 
   summarise() %>% 
   left_join(select(correspondencia,id_upm,
-                   man_sec = clave_captura,estado_upm),
-            by = c("id_upm","man_sec") ) %>% 
-  filter(estado_upm != "COMPLETA" , estado_upm != "completa") 
+                   man_sec = clave_captura,tipo_formulario, estado_upm),
+            by = c("id_upm","man_sec") )
+
+# %>% 
+#   filter(estado_upm != "COMPLETA" , estado_upm != "completa", estado_upm != "Cerrado", estado_upm != "cerrado") 
 
 # -----------------------------------------------------------------------------
 # mansec en la muestra que no aparecen en el enlistamiento:
@@ -49,9 +51,10 @@ man_sec_no_enlistados <- muestra %>%
   select(id_upm,man_sec) %>% 
   group_by(id_upm,man_sec) %>% 
   summarise() %>% left_join(select(correspondencia,id_upm,
-                                    man_sec = clave_muestra,estado_upm),
-                             by = c("id_upm","man_sec") ) %>% 
-  filter(estado_upm != "COMPLETA" , estado_upm != "completa") 
+                                    man_sec = clave_muestra,tipo_formulario, estado_upm),
+                             by = c("id_upm","man_sec") )
+# %>% 
+#   filter(estado_upm != "COMPLETA" , estado_upm != "completa", estado_upm != "Cerrado", estado_upm != "cerrado") 
 
 # -----------------------------------------------------------------------------
 # UPM incompletas
@@ -69,6 +72,12 @@ ump_incompl <- muestra %>% filter(periodo_nuevo == as.numeric(periodo)) %>%
 
 # -----------------------------------------------------------------------------
 # upm no enlistadas
+#  - Se revisa que UPM no aparecen en la base de actualización.
+#  - Se usa la base de supermanzanas para identificar si una UPM no levantada pertenece
+#    a una supermanza. Esto debido a que DICA usa el ID de la primera UPM que 
+#    encuentra en el caso de que un conglomerado tiene mas de una UPM. Si pasa 
+#    pasa esto se debe particionar el conglomerado y elegir aquel que corresponda.
+#    Esto se hace en el script de 01_seleccion_muestra_usm.R.
 # -----------------------------------------------------------------------------
 
 upm_no_enlistadas <- muestra %>% 
@@ -77,6 +86,12 @@ upm_no_enlistadas <- muestra %>%
   group_by(id_upm) %>% 
   summarise()
 
+upm_super_man <- read_excel("insumos/99_supermanzanas/upm_enighur_partir.xlsx")
+
+upm_no_enlistadas <- upm_no_enlistadas %>% 
+  mutate(id_conglomerado = substr(id_upm, 1, 10), 
+         obs = ifelse(id_conglomerado %in% upm_super_man$id_conglomerado, 
+                      "supermanzana", "no supermanzana"))
 # -----------------------------------------------------------------------------
 # upm que no aparecen en las novedades y no estan enlistadas
 # -----------------------------------------------------------------------------

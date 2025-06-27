@@ -7,7 +7,7 @@ source("rutinas/99_librerias/read_zip.R")
 # Lectura de la base de cobertura: Necesitamos indicar el periodo
 # -----------------------------------------------------------------------------
 
-periodo <- 3
+periodo <- 5
 periodo <- str_pad(periodo,2,"left","0")
 
 # -----------------------------------------------------------------------------
@@ -18,19 +18,17 @@ cobertura_base_total <- NULL
 
 for(i in c(1:as.numeric(periodo))){
   periodo <- str_pad(i,2,"left","0")
-  direc = paste0("insumos/04_cobertura/periodo_", periodo)
-  archivo_zip = dir(direc)[grep(dir(direc), pattern = "v1_")]
-  documento = "IDENTIFICACION"
+  direc = paste0("intermedios/04_cobertura/periodo_", periodo,"/cobertura_base_periodo_", periodo, ".rds")
+  #archivo_zip = dir(direc)[grep(dir(direc), pattern = "v1_")]
+  #documento = "IDENTIFICACION"
   
-  aux <- read_zip(direc, archivo_zip, documento) %>% 
-    clean_names() %>% 
-    mutate(ciudad = remove_labels(ciudad))
+  aux <- import(direc)
   
   cobertura_base_total <- rbind(cobertura_base_total,aux)
 }
 
 # -----------------------------------------------------------------------------
-# Lectura de la bases de cobertura de cada periodo
+# 
 # -----------------------------------------------------------------------------
 
 cobertura_base_total <- cobertura_base_total %>% 
@@ -55,7 +53,7 @@ cobertura_base_total <- cobertura_base_total %>%
 # -----------------------------------------------------------------------------
 
 ruta <- paste0("intermedios/04_cobertura/")
-export(cobertura_base_total, 
+rio::export(cobertura_base_total, 
        paste0(ruta,"cobertura_base_total.rds"), overwrite = FALSE)
 
 

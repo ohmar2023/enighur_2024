@@ -2,5 +2,7 @@
 /insumos/02_muestra_upm/pobl_machala/poblacion2022_machala.rds
 /insumos/03_enlistamiento/periodo_01/2024_12_11/enighur_j2.gpkg
 /insumos/03_enlistamiento/periodo_01/2024_12_13/enighur_j2.gpkg
+/insumos/03_enlistamiento/periodo_09/Base_muestral___20250623_095031.csv
+/insumos/99_gpk_upm_muestra/dpa/cantones.gpkg
+/insumos/99_gpk_upm_muestra/dpa/parroquias.gpkg
 /insumos/99_marco_viv_precenso/marco_viv_ocu_nap.rds
-/TinyTeX.zip

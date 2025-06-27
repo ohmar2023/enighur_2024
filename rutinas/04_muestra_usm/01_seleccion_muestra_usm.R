@@ -7,8 +7,8 @@ source("rutinas/99_librerias/librerias.R")
 # Parametros:
 # -----------------------------------------------------------------------------
 
-periodo = 7
-fecha <- "2025_05_06" # se usa como semilla, ya le transforma en numeric
+periodo = 9
+fecha <- "2025_06_27" # se usa como semilla, ya le transforma en numeric
 
 # -----------------------------------------------------------------------------
 # Lectura de base-DICA : Considera el periodo
@@ -61,7 +61,8 @@ muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_006.xl
 # -----------------------------------------------------------------------------
 
 upm_no_lev <- read_excel(paste0(ruta,"/incon_man_sec_upm_periodo_",periodo,".xlsx"), 
-                         sheet = "upm_no_enlistadas")
+                         sheet = "upm_no_enlistadas") %>% 
+  filter(obs != "supermanzana")
 
 # -----------------------------------------------------------------------------
 # Importando marco de viv precenso-2022
@@ -69,7 +70,7 @@ upm_no_lev <- read_excel(paste0(ruta,"/incon_man_sec_upm_periodo_",periodo,".xls
 # -----------------------------------------------------------------------------
 
 if (dim(upm_no_lev)[1] == 0) {
-  message("NO HAY UPM NO LEVANATADAS") 
+  message("NO HAY UPM NO ACTUALIZADAS") 
   marco_upm_no_lev <- NULL
   } else{
 marco_upm_no_lev <- readRDS("insumos/99_marco_viv_precenso/marco_viv_ocu_nap.rds") %>% 
@@ -121,6 +122,8 @@ marco_viv_superman <- base_ocupada %>%
   filter(id_conglomerado %in% upm_super_man$id_conglomerado) %>% 
   left_join(select(particion_manzanas_li_60,id_edif,grupo), by= "id_edif") 
 
+#marco_viv_superman %>% filter(id_upm == "170150315901") %>% View()
+
 table(marco_viv_superman$grupo,useNA = "ifany")
 
 if ( dim(marco_viv_superman)[1] !=0 ) {
@@ -163,7 +166,7 @@ if ( dim(marco_viv_superman)[1] !=0 ) {
   }
   
   #gr_1==gr_2
-  
+
   # cbind(marco_viv_superman,gr_1,gr_2) %>% select(man_sec_21,grupo,gr_1,gr_2) %>%
   #   mutate(gr_3 = ifelse(gr_1 == gr_2 & !is.na(gr_1) & !is.na(gr_2), 1, 0)) %>%
   #   View()
@@ -342,17 +345,16 @@ muestra_usm_myc$jefehoga[2753]
 # Exportando resultados
 # -----------------------------------------------------------------------------
 
-export(muestra_usm_myc, # muestra seleccionada
+rio::export(muestra_usm_myc, # muestra seleccionada
        paste0("productos/02_muestra_usm/periodo_",periodo,"/muestra_usm_myc.xlsx"))
 
-export(marco_viv_muestra, # base marco
+rio::export(marco_viv_muestra, # base marco
        paste0("productos/02_muestra_usm/periodo_",periodo,"/marco_viv_muestra.rds"))
 
-export(muestra_usm_inter, # base que tiene los pik
+rio::export(muestra_usm_inter, # base que tiene los pik
        paste0("productos/02_muestra_usm/periodo_",periodo,"/muestra_usm_inter.rds"))
 
 
 apply(muestra_usm_myc, 2, function(x) sum(is.na(x)))
 
-export(muestra_usm_inter, "muestra_usm_inter_per_02.xlsx")
 

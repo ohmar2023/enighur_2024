@@ -8,7 +8,7 @@ source("rutinas/99_librerias/read_zip.R")
 # Lectura de la base de cobertura: Necesitamos indicar el periodo
 # -----------------------------------------------------------------------------
 
-periodo <- 3
+periodo <- 5
 periodo <- str_pad(periodo,2,"left","0")
 
 # -----------------------------------------------------------------------------
@@ -60,5 +60,5 @@ cobertura_base <- cobertura_base %>%
 periodo <- str_pad(periodo, 2, "left", "0")
 #ruta <- paste0("intermedios/04_cobertura/","periodo_",periodo)
 ruta <- paste0("intermedios/04_cobertura/periodo_", periodo)
-export(cobertura_base, paste0(ruta,"/cobertura_base_periodo_", periodo,".rds"), overwrite = FALSE)
+rio::export(cobertura_base, paste0(ruta,"/cobertura_base_periodo_", periodo,".rds"), overwrite = FALSE)
 

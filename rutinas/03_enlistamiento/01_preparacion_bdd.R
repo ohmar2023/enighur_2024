@@ -8,7 +8,7 @@
 
 periodo <- str_pad(periodo, 2, "left", "0")
 
-ruta <- paste0("D:\\OMAR LLAMBO\\enighur_2024\\insumos\\03_enlistamiento\\periodo_", periodo)
+ruta <- paste0("insumos/03_enlistamiento/periodo_", periodo)
 n_base <- dir(ruta)[grepl(dir(ruta),pattern = ".csv")]
 n_base <- ifelse(grepl(n_base,pattern = "ase_muestral"), n_base, "xxx")
 base <- read.csv(paste0(ruta,"\\",n_base),
@@ -166,7 +166,7 @@ message("Error: Revisar el periodo en el que estamos")}
 ruta_export <- paste0("intermedios/03_enlistamiento/01_concistencia/","periodo_",periodo)
 dir.create(ruta_export, showWarnings = F) 
 dir.exists(ruta_export)
-export(base, paste0(ruta_export,"/base.rds"), overwrite = FALSE)
+rio::export(base, paste0(ruta_export,"/base.rds"), overwrite = FALSE)
 
 if( sum(grepl(dir(ruta_export), pattern = "base.rds")) == 1 ){
   print("--- Se exportó correctamente el documento base.rds ---")
