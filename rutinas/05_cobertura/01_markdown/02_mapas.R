@@ -105,7 +105,7 @@ mapa_upm_cobertura_nacional <- ggplot(data = provincias %>%
   theme(axis.text.x = element_blank(),
         axis.text.y = element_blank())
 
-#mapa_upm_cobertura_nacional
+mapa_upm_cobertura_nacional
 
 # ------------------------------------------------------------------------------
 # Evaluación efectividad de la muestra - zonal hasta el periodo acumulado n.

@@ -10,7 +10,7 @@ library(openxlsx)
 library(rio)
 library(readr)
 library(sampling)
-library(misty)
+#library(misty)
 library(haven)
 library(labelled)
 library(stringi)
@@ -42,7 +42,7 @@ library(rmapshaper)
 library(janitor)
 
 
-library(hrbrthemes)
+#library(hrbrthemes)
 library( ggthemes )
 
 library(rio)

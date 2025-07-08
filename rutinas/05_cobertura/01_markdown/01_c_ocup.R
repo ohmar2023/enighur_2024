@@ -132,11 +132,12 @@ conformidad_upm <- cobertura_base %>%
   mutate(inter_tre = case_when(tre >= 0.75 ~ "Mayor a 75%",
                                tre >= 0.550 & tre < 0.75 ~ "Entre 50% - 75%",
                                tre >= 0 & tre < 50 ~ "Menor a 50%", 
-                               TRUE ~ "error")) %>% 
-  group_by(TRE = inter_tre) %>% 
-  summarize(n = n()) 
+                               TRUE ~ "error"))
 
-graf_tasas_upm <- ggplot(conformidad_upm %>% arrange(TRE), 
+graf_tasas_upm <- ggplot(conformidad_upm %>%  
+                           group_by(TRE = inter_tre) %>% 
+                           summarize(n = n()) %>% 
+                           arrange(TRE), 
                          aes(x = TRE, y = n, fill = TRE)) +
   geom_bar(stat = "identity")+
   scale_fill_manual(values = c("#FAD211", "#8BB657", "#D2241F" )) +
