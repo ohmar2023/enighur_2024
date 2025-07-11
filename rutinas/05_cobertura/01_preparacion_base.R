@@ -16,7 +16,8 @@ periodo <- str_pad(periodo,2,"left","0")
 # -----------------------------------------------------------------------------
 
 direc = paste0("insumos/04_cobertura/periodo_", periodo)
-archivo_zip = dir(direc)[grep(dir(direc), pattern = as.numeric(periodo))]
+archivo_zip = dir(direc)[grep(dir(direc), pattern = "Periodo")]
+archivo_zip
 documento = "IDENTIFICACION"
 
 cobertura_base <- read_zip(direc, archivo_zip, documento) %>% 
@@ -54,11 +55,54 @@ cobertura_base <- cobertura_base %>%
                            pro %in% c("01","03","11","07","14","19","27","28","31") ~ "SUR")) 
 
 # -----------------------------------------------------------------------------
+# Corrigiendo hogar 05: Estas son encuestas recuperadas por los equipos "bonberos"
+# Agregando la variable ELEGIBILIDAD
+# -----------------------------------------------------------------------------
+
+cobertura_base_1 <- cobertura_base %>% 
+  filter(ifelse(hogar %in%  c(5,6) & rvo != 1, FALSE, TRUE)) %>%
+  mutate(id_upm_no_orden = paste0(id_upm, vivienda)) %>% 
+  mutate(n_rvo = case_when(rvo == 1 ~ "Completa",
+                           rvo == 2 ~ "Rechazo",
+                           rvo == 3 ~ "Nadie en casa",
+                           rvo == 4 ~ "Vivienda temporal",
+                           rvo == 5 ~ "Vivienda desocupada",
+                           rvo == 6 ~ "Vivienda en construcción",
+                           rvo == 7 ~ "Vivienda inhabitada o destruida",
+                           rvo == 8 ~ "Vivienda convertida en negocio",
+                           rvo == 9 ~ "Otra razón",
+                           rvo == 10 ~ "Rechazo a mitad de la encuesta")) %>% 
+  mutate(Elegibilidad = case_when(rvo == 1 ~ "re",
+                                  rvo == 2 ~ "nr",
+                                  rvo %in% c(4,5,6,7,8,9) ~ "ne",
+                                  rvo == 3 ~ "ed",
+                                  TRUE ~ "error")) %>% 
+  group_by(id_upm_no_orden) %>% 
+  mutate(revision_1 = 1, 
+         aux_1 = row_number(),
+         aux_2 = n(),
+         revision_2 = ifelse (aux_2 > 1 & n_rvo != "Completa" , 0, revision_1)) %>% 
+  ungroup() %>% 
+  filter(revision_2 == 1) %>% 
+  select(-aux_1, -aux_2, -revision_1, -revision_2)
+
+# Controlando estas viviendas catalogadas como hogar 5
+
+control_hog_05 <- table(cobertura_base$hogar) %>% data.frame() %>% 
+  rename("n_original" = Freq) %>% 
+  left_join(table(cobertura_base_1$hogar) %>% 
+              data.frame() %>% 
+              rename("n_nuevo" = Freq) , by = "Var1") %>% 
+  mutate(control = n_original - n_nuevo)
+
+dim(cobertura_base)[1] - dim(cobertura_base_1)[1]
+
+# -----------------------------------------------------------------------------
 # Exportando base
 # -----------------------------------------------------------------------------
 
 periodo <- str_pad(periodo, 2, "left", "0")
 #ruta <- paste0("intermedios/04_cobertura/","periodo_",periodo)
 ruta <- paste0("intermedios/04_cobertura/periodo_", periodo)
-rio::export(cobertura_base, paste0(ruta,"/cobertura_base_periodo_", periodo,".rds"), overwrite = FALSE)
+rio::export(cobertura_base_1, paste0(ruta,"/cobertura_base_periodo_", periodo,".rds"), overwrite = FALSE)
 

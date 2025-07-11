@@ -21,7 +21,8 @@ wk1 <- muestra_primera_etapa %>%
 wk2 <- wk1 %>% 
   select(- starts_with("Nh_est")) %>% 
   # Probabilidad de inclusion de segunda etapa teórica por UPM
-  mutate(pse = ki_p/Ni) %>% 
+  mutate(ki_p = ne + nr + re + ed,
+         pse = ki_p/Ni) %>% 
   # Factor de expansión teórico y factor de expansión ajustado por primera etapa
   mutate(d0 = 1 / (ppe * pse),
          d1 = a1h * d0) %>% 
@@ -61,3 +62,46 @@ control <- wk2 %>%
 plot(log(control$Nh_est), log(control$control1))
 abline(0, 1, col = "red")
 table(control$Nh_est - control$control1, useNA = "ifany")
+
+
+plot(log(control$control1), log(control$control2))
+abline(0, 1, col = "red")
+table(control$Nh_est - control$control2, useNA = "ifany")
+
+plot(log(control$control2), log(control$control3))
+abline(0, 1, col = "red")
+table(control$Nh_est - control$control3, useNA = "ifany")
+
+# summarys de los ajustes de cobertura
+summary(wk2$a1h)
+summary(wk2$a2h)
+summary(wk2$a3h)
+
+# expansion de personas con los diferentes factores
+sum(wk2$totper * wk2$d0)
+sum(wk2$totper * wk2$d1)
+sum(wk2$totper * wk2$d2)
+sum(wk2$totper * wk2$d3)
+
+# Número de viviendas ocupadas marco
+sum(control$Nh_est)
+
+# Número de viviendas estimadas con el factor de diseño
+sum(control$tre_1) +
+  sum(control$tnr_1) +
+  sum(control$tne_1) +
+  sum(control$ted_1)
+
+# Número de viviendas estimadas con el factor ajustado por elegibilidad desconocida
+sum(control$tre_2) +
+  sum(control$tnr_2) +
+  sum(control$tne_2)
+
+# Número de viviendas estimadas con el factor ajustado por no respuesta
+sum(control$tre_3, na.rm = T) +
+  sum(control$tne_2)
+
+
+
+
+

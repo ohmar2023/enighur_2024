@@ -7,7 +7,7 @@ source("rutinas/99_librerias/librerias.R")
 # Parámetros
 # -----------------------------------------------------------------------------
 
-periodo <- 5
+periodo <- 7
 periodo <- str_pad(periodo,2,"left","0")
 
 # -----------------------------------------------------------------------------
@@ -92,5 +92,4 @@ addWorksheet(wb, "viv_cober_no_muestra")
 writeData(wb, sheet = "viv_muestra_no_cober", viv_muestra_no_cober)
 writeData(wb, sheet = "viv_cober_no_muestra", viv_cober_no_muestra)
 saveWorkbook(wb, paste0(ruta_exp, paste0("/nov_cob_per_",periodo,".xlsx")), overwrite = T)
-
 

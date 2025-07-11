@@ -54,15 +54,13 @@ muestra_primera_etapa <- muestra_primera_etapa %>%
   group_by(estrato) %>% 
   mutate(mh = n(),
          mh_p = sum(levantada), 
-         pii_aux =  mh_p * enighur_pii / mh, 
-         aih = mh / mh_p, 
-         ki = 12, 
-         ki_p = 12) %>% #Ajuste de cobertura primera etapa.
+         pii_aux =  enighur_pii, 
+         ki = 12) %>% #Ajuste de cobertura primera etapa.
   ungroup() %>% 
   left_join(cobertura_base_total_1, by = "id_upm") %>% 
   select(id_upm, pro, area, estrato, 
          pik = pii_aux, mh, mh_p, Nh, Ni, 
-         ki, ne, nr, re, ed, totper, tothog, ki_p) %>% 
+         ki, ne, nr, re, ed, totper, tothog) %>% 
   filter(!is.na(ne))
 
 
