@@ -4,9 +4,9 @@
 # -----------------------------------------------------------------------------
 
 
-# Tasas a nivel de UPM --------------------------------------------------------
+# Calculo de Tasas a nivel de UPM ---------------------------------------------
 
-conformidad_upm <- cobertura_base %>%
+conformidad_upm <- cobertura_base_total %>%
   group_by(id_upm, Elegibilidad) %>% 
   summarise(n = n()) %>%
   pivot_wider(names_from = Elegibilidad, values_from = n) %>%
@@ -18,7 +18,21 @@ conformidad_upm <- cobertura_base %>%
   mutate(inter_tre = case_when(tre >= 0.75 ~ "Mayor a 75%",
                                tre >= 0.550 & tre < 0.75 ~ "Entre 50% - 75%",
                                tre >= 0 & tre < 50 ~ "Menor a 50%", 
-                               TRUE ~ "error"))
+                               TRUE ~ "error")) %>% 
+  mutate(id_conglomerado = substr(id_upm, 1,10), 
+         n_rvo_aux = ifelse(tre >= 0.75, "Efectiva", "No efectiva"))
+
+# upm_geo %>% 
+#   group_by(zonal, inter_tre) %>% 
+#   summarise(n = n()) %>% 
+#   st_drop_geometry() %>%
+#   filter(!is.na(inter_tre)) %>% 
+#   adorn_totals() %>% 
+#   View()
+
+
+
+# Tasas de conformidad por UPM  ------------------------------------------------
 
 graf_tasas_upm <- ggplot(conformidad_upm %>%  
                            group_by(TRE = inter_tre) %>% 

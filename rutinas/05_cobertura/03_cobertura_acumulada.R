@@ -27,6 +27,9 @@ for(i in c(1:as.numeric(periodo))){
   cobertura_base_total <- rbind(cobertura_base_total,aux)
 }
 
+cobertura_base_total <- cobertura_base_total %>% 
+  mutate(id_conglomerado = substr(id_upm,1,10))
+
 # -----------------------------------------------------------------------------
 # Lectura de la bases de cobertura de cada periodo
 # -----------------------------------------------------------------------------

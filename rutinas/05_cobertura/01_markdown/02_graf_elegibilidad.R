@@ -69,7 +69,8 @@ graf_elegibilidad_zon_del_per <- graf_elegibilidad(cobertura_base,
 ruta <- paste0("intermedios/04_cobertura/")
 cobertura_base_total <- import(paste0(ruta,"cobertura_base_total.rds"))
 
-graf_elegibilidad_por_per <- graf_elegibilidad(cobertura_base_total,
+graf_elegibilidad_por_per <- graf_elegibilidad(cobertura_base_total %>% 
+                                                 mutate(periodo = as.character(periodo)),
                                                forma_de_agrupar = "periodo", 
                                                   variable = "Elegibilidad")
 

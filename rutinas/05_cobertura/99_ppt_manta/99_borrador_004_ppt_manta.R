@@ -31,7 +31,7 @@ upm_geo <- read_sf("insumos/99_gpk_upm_muestra/muestra_conglomerado_geo.gpkg") %
                                 "Levantado", "Por levantar")) %>% 
   mutate(zonal = case_when(dpa_provin  %in% c("04","08","10","17","21","25","30") ~ "ADM. C. CAMPO",
                            dpa_provin  %in% c("02","05","06","15","16","18","22","29") ~ "CENTRO",
-                           dpa_provin  %in% c("09","12","13","23","24","26","32","33") ~ "LITORAL",
+                           dpa_provin  %in% c("09","12","13","23","24","26","32","33", "20") ~ "LITORAL",
                            dpa_provin  %in% c("01","03","11","07","14","19","27","28","31") ~ "SUR")) %>% 
   left_join(select(conformidad_upm, id_conglomerado, n_rvo_aux, inter_tre), 
             by = "id_conglomerado")
@@ -41,8 +41,6 @@ upm_geo <- read_sf("insumos/99_gpk_upm_muestra/muestra_conglomerado_geo.gpkg") %
     filter(!is.na(inter_tre)) %>% 
     adorn_totals() %>% 
     View()
-  
-  
 
 # ------------------------------------------------------------------------------
 # Evaluación efectividad de la muestra - zonal hasta el periodo acumulado n.

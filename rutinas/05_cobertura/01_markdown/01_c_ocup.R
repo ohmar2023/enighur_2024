@@ -11,7 +11,7 @@ source("rutinas/99_librerias/librerias.R")
 # Lectura base de cobertura
 # -----------------------------------------------------------------------------
 
-periodo <- 6
+periodo <- 7
 periodo <- str_pad(periodo,2,"left","0")
 
 ruta <- paste0("intermedios/04_cobertura/periodo_",periodo,

@@ -19,3 +19,6 @@ rio::export(no_efectivas_estrato,
             "documentos/comisión manta/ok_no_efectivas_estrato_viv.xlsx")
 
 
+
+
+
