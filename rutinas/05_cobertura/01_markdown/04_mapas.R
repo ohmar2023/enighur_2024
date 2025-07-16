@@ -3,7 +3,7 @@
 # Gráfico tasas MAPA COEBRTURA TOTAL
 # -----------------------------------------------------------------------------
 
-source("rutinas/99_librerias/librerias.R")
+#source("rutinas/99_librerias/librerias.R")
 
 # ------------------------------------------------------------------------------
 # PROVINVIAS
@@ -38,9 +38,9 @@ upm_geo <- read_sf("insumos/99_gpk_upm_muestra/muestra_conglomerado_geo.gpkg") %
                            dpa_provin  %in% c("02","05","06","15","16","18","22","29") ~ "CENTRO",
                            dpa_provin  %in% c("09","12","13","23","24","26","32","33") ~ "LITORAL",
                            dpa_provin  %in% c("01","03","11","07","14","19","27","28","31") ~ "SUR")) %>% 
-  left_join(select(conformidad_upm, id_conglomerado,inter_tre, n_rvo_aux), by = "id_conglomerado")
+  left_join(select(tasas_conf_upm %>% ungroup(), id_conglomerado, inter_tre, n_rvo_aux), by = "id_conglomerado")
 
-table(conformidad_upm$n_rvo_aux)
+upm_geo%>% names()
 
 # ------------------------------------------------------------------------------
 # Función mapas por zonales

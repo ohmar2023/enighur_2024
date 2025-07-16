@@ -208,7 +208,7 @@ graf_elegibilidad_por_per
 
 Con el objetivo de evaluar el comportamiento de las tasas de conformidad por provincia, se presenta el gráfico 4 en el que podemos apreciar que la provincia de Pichincha, Galápagos y Santo Domingo se mantienen por debajo del umbral establecido. La provincia de Guayas, a pesar de estar sobre el umbral, requiere la misma atención que las otras provincias mencionadas. 
 
-$$\textbf{Gráfico 4:}\text{ Tasa de conformidad por periodo}$$
+$$\textbf{Gráfico 4:}\text{ Tasa de conformidad por provincia}$$
 ```{r echo=F, fig.width=7, fig.height = 3.5, message=F, warning=F}
 
 graf_elegibilidad_prov_acum
@@ -216,17 +216,46 @@ graf_elegibilidad_prov_acum
 ```
 \newpage
 
+## Tasas de conformidad a nivel de UPM
+
+El presente apartado reúne la información de las tasas de conformidad a nivel de UPM, es decir, se evalúa los umbrales en los que se encuentran y se identifica la manera en la que están conformadas las UPM de acuerdo al resultado de la encuesta de cada una de las viviendas que la conforman.
+
+En la siguiente tabla se presentan los resultados desagregados por coordinación zonal.
+
+$$\textbf{Tabla 2: }\text{Tasas de conformidad a nivel de UPM}$$
+
+```{r echo=F, message=F, warning=F}
+tabla_tasas_conf_upm_zonal_aux <- tabla_tasas_conf_upm_zonal %>% 
+  mutate(porcentaje = paste0(porcentaje,"%")) %>% 
+  pivot_wider(id_cols = c("zonal"), names_from = TRE, values_from = porcentaje) 
+
+tabla_tasas_conf_upm_zonal_aux[is.na(tabla_tasas_conf_upm_zonal_aux)] <- "0.00%"
+
+tabla_tasas_conf_upm_zonal_aux
+
+```
+$$\textbf{Gráfico 5: }\text{Tasas de conformidad a nivel de UPM}$$
+```{r echo=F, fig.width = 10.0, fig.height = 6.5, message=F, warning=F}
+
+graf_tasas_conf_upm_zonal
+
+```
+
+
+\newpage
 \textcolor{trueblue}{\section{Evaluación de la efectividad por UPM }}
 
 En el presente apartado se evalúa la UPM como "Efectiva" y "No efectiva". De esta manera podemos evaluar por zonal el comportamiento en estas dos categorías. También es de interés detectar una posible acumuluación geográfica de aquellas UPM catalogadas como "No efectivas".
 
-```{r echo=F, fig.width = 7.0, fig.height = 4.0, message=F, warning=F}
+```{r echo=F, fig.width = 10.0, fig.height = 6.5, message=F, warning=F}
 
 mapa_upm_cobertura_central
 
 ```
 
-```{r echo=F, fig.width = 7.0, fig.height = 4.0, message=F, warning=F}
+
+
+```{r echo=F, fig.width = 10.0, fig.height = 4.5, message=F, warning=F}
 
 mapa_upm_cobertura_centro
 
