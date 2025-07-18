@@ -12,17 +12,17 @@ wk1 <- muestra_primera_etapa %>%
   mutate(a1h = mh / mh_p,
          fexp_pe_aju = fexp * a1h) %>% 
   # Se calula los estimadores de vivienda usando el factor ajustado de primera etapa
-  mutate(Nh_est = Ni * fexp_pe_aju) %>% 
+  mutate(Nh_est = Ni_enlist * fexp_pe_aju) %>% 
   group_by(estrato) %>% 
   mutate(Nh_est = round(sum(Nh_est), 0)) %>% 
-  ungroup()
+  ungroup() 
 
 
 wk2 <- wk1 %>% 
   select(- starts_with("Nh_est")) %>% 
   # Probabilidad de inclusion de segunda etapa teórica por UPM
   mutate(ki_p = ne + nr + re + ed,
-         pse = ki_p/Ni) %>% 
+         pse = ki_p/Ni_enlist) %>% # Ni DEL ENLISTAMIENTO ------------------------------------------cambiar
   # Factor de expansión teórico y factor de expansión ajustado por primera etapa
   mutate(d0 = 1 / (ppe * pse),
          d1 = a1h * d0) %>% 
@@ -59,18 +59,18 @@ control <- wk2 %>%
          control3 = tre_3 + tne_2)
 
   
-plot(log(control$Nh_est), log(control$control1))
-abline(0, 1, col = "red")
-table(control$Nh_est - control$control1, useNA = "ifany")
-
-
-plot(log(control$control1), log(control$control2))
-abline(0, 1, col = "red")
-table(control$Nh_est - control$control2, useNA = "ifany")
-
-plot(log(control$control2), log(control$control3))
-abline(0, 1, col = "red")
-table(control$Nh_est - control$control3, useNA = "ifany")
+# plot(log(control$Nh_est), log(control$control1))
+# abline(0, 1, col = "red")
+# table(control$Nh_est - control$control1, useNA = "ifany")
+# 
+# 
+# plot(log(control$control1), log(control$control2))
+# abline(0, 1, col = "red")
+# table(control$Nh_est - control$control2, useNA = "ifany")
+# 
+# plot(log(control$control2), log(control$control3))
+# abline(0, 1, col = "red")
+# table(control$Nh_est - control$control3, useNA = "ifany")
 
 # summarys de los ajustes de cobertura
 summary(wk2$a1h)
@@ -102,6 +102,6 @@ sum(control$tre_3, na.rm = T) +
   sum(control$tne_2)
 
 
-
+rio::export(wk2, "wk2_1er_resultado.xlsx")
 
 
