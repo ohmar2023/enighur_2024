@@ -47,5 +47,7 @@ library( ggthemes )
 
 library(rio)
 
+library(pander)
+
 
 print("Se han leido las librerias")

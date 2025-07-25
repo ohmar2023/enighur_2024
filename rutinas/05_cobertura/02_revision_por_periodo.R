@@ -8,15 +8,17 @@ source("rutinas/99_librerias/librerias.R")
 # -----------------------------------------------------------------------------
 
 periodo <- 7
+p <- periodo
 periodo <- str_pad(periodo,2,"left","0")
 
 # -----------------------------------------------------------------------------
 # Lectura base de cobertura
 # -----------------------------------------------------------------------------
 
-ruta <- paste0("intermedios/04_cobertura/periodo_",periodo,
-               "/cobertura_base_periodo_",periodo,".rds")
-cobertura_base <- readRDS(ruta)
+ruta <- paste0("intermedios/04_cobertura/cobertura_base_total.rds")
+
+cobertura_base <- readRDS(ruta) %>% 
+  filter(periodo == p)
 
 # -----------------------------------------------------------------------------
 # Descriptivo periodo 

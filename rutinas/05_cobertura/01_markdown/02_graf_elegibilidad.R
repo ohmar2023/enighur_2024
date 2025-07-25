@@ -3,9 +3,6 @@
 # Función para graficar la ELEGIBILIDAD
 #-----------------------------------------------------------------------------
 
-forma_de_agrupar <- "pro"
-variable <- "Elegibilidad"
-  
 graf_elegibilidad <- function(base,
                               forma_de_agrupar = "pro",
                               variable = "Elegibilidad"){
@@ -44,30 +41,28 @@ graf_elegibilidad <- function(base,
 # *****************************************************************************
 # Elegibilidad - PERIODO
 # *****************************************************************************
-
-# Gráfico por provincia -------------------------------------------------------
-
-graf_elegibilidad_prov_del_per <- graf_elegibilidad(cobertura_base,
-                                                    forma_de_agrupar = "pro", 
-                                                    variable = "Elegibilidad")
-
-# Gráfico upm por zonales -----------------------------------------------------
-
-
-graf_elegibilidad_zon_del_per <- graf_elegibilidad(cobertura_base,
-                                                   forma_de_agrupar = "zonal", 
-                                                   variable = "Elegibilidad")
+# 
+# 
+# # Gráfico por provincia -------------------------------------------------------
+# 
+# graf_elegibilidad_prov_del_per <- graf_elegibilidad(cobertura_base,
+#                                                     forma_de_agrupar = "pro", 
+#                                                     variable = "Elegibilidad")
+# 
+# # Gráfico upm por zonales -----------------------------------------------------
+# 
+# 
+# graf_elegibilidad_zon_del_per <- graf_elegibilidad(cobertura_base,
+#                                                    forma_de_agrupar = "zonal", 
+#                                                    variable = "Elegibilidad")
   
 
 # *****************************************************************************
-# Elegibilidad - Por periodo
+# Elegibilidad - Acumulada
 # *****************************************************************************
 
 # Gráfico tasas por periodo COEBRTURA TOTAL -----------------------------------
 
-
-ruta <- paste0("intermedios/04_cobertura/")
-cobertura_base_total <- import(paste0(ruta,"cobertura_base_total.rds"))
 
 graf_elegibilidad_por_per <- graf_elegibilidad(cobertura_base_total %>% 
                                                  mutate(periodo = as.character(periodo)),
@@ -92,15 +87,42 @@ graf_elegibilidad_nac_acum <- graf_elegibilidad(cobertura_base_total %>%
                                                  variable = "Elegibilidad")
 # Gráfico upm por zonales -----------------------------------------------------
 
-
 graf_elegibilidad_zon_acum <- graf_elegibilidad(cobertura_base_total,
                                                    forma_de_agrupar = "zonal", 
                                                    variable = "Elegibilidad")
 
+# Gráfico upm por cantón autorepresentado  ------------------------------------
+
+v_canton_auto <- c("170150", #Quito
+                   "090150", #Guayaquil
+                   "010150",#Cuenca
+                   "070150", #Machala
+                   "180150", #Ambato
+                   "080150", #Esmeraldas
+                   "230150", #Santo Domingo
+                   "130850", #Manta
+                   "110150") #Loja
+
+cobertura_base_total_canton_auto <- cobertura_base_total %>% 
+  mutate(canton_auto = paste0(pro, can, par)) %>% 
+  filter(canton_auto %in% v_canton_auto) %>% 
+  mutate(n_canton_auto = case_when( canton_auto == "010150" ~ "CUENCA",
+                                    canton_auto == "110150" ~ "LOJA_c", #11
+                                    canton_auto == "170150" ~ "QUITO",
+                                    canton_auto == "180150" ~ "AMBATO",
+                                    canton_auto == "070150" ~ "MACHALA", #07
+                                    canton_auto == "080150"   ~ "ESMERALDAS_c", #08
+                                    canton_auto == "090150" ~ "GUAYAQUIL",
+                                    canton_auto == "130850"  ~ "MANTA", #13
+                                    canton_auto == "230150" ~ "SANTO DOMINGO", #23
+                                    TRUE ~ "Error"))
 
 
+graf_elegibilidad_canton_auto_acum <- graf_elegibilidad(cobertura_base_total_canton_auto,
+                                                forma_de_agrupar = "n_canton_auto", 
+                                                variable = "Elegibilidad")
 
 
-
+# Gráfico upm por cantón autorepresentado  ------------------------------------
 
 

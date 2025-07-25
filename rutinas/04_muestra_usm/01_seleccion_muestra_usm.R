@@ -7,8 +7,8 @@ source("rutinas/99_librerias/librerias.R")
 # Parametros:
 # -----------------------------------------------------------------------------
 
-periodo = 9
-fecha <- "2025_06_27" # se usa como semilla, ya le transforma en numeric
+periodo = 10
+fecha <- "2025_07_24" # se usa como semilla, ya le transforma en numeric
 
 # -----------------------------------------------------------------------------
 # Lectura de base-DICA : Considera el periodo
@@ -87,9 +87,8 @@ marco_upm_no_lev <- readRDS("insumos/99_marco_viv_precenso/marco_viv_ocu_nap.rds
                                TRUE ~ paste0(n_via_p," Y ", n_via_s))
           ) %>% 
   left_join(muestra %>% filter(!duplicated(id_upm)) %>% 
-              select(id_upm,semana_nueva,periodo_nuevo), by = "id_upm")
-}
-
+              select(id_upm,semana_nueva,periodo_nuevo), by = "id_upm")}
+n_distinct(marco_upm_no_lev$id_upm)
 # -----------------------------------------------------------------------------
 # Marco de viviendas super manzanas: Con el grupo ya sabriamos que edificio
 # corresponde a que upm. Sin embargo, existen casos en los que se crea una nueva
@@ -122,8 +121,7 @@ marco_viv_superman <- base_ocupada %>%
   filter(id_conglomerado %in% upm_super_man$id_conglomerado) %>% 
   left_join(select(particion_manzanas_li_60,id_edif,grupo), by= "id_edif") 
 
-#marco_viv_superman %>% filter(id_upm == "170150315901") %>% View()
-
+table(marco_viv_superman$id_conglomerado, marco_viv_superman$grupo, useNA = "ifany")
 table(marco_viv_superman$grupo,useNA = "ifany")
 
 if ( dim(marco_viv_superman)[1] !=0 ) {
@@ -164,21 +162,24 @@ if ( dim(marco_viv_superman)[1] !=0 ) {
       gr_2[j] = marco_viv_superman$grupo[j]
     }
   }
-  
-  #gr_1==gr_2
+
 
   # cbind(marco_viv_superman,gr_1,gr_2) %>% select(man_sec_21,grupo,gr_1,gr_2) %>%
-  #   mutate(gr_3 = ifelse(gr_1 == gr_2 & !is.na(gr_1) & !is.na(gr_2), 1, 0)) %>%
+  #   mutate(control = ifelse(gr_1 == gr_2 & !is.na(gr_1) & !is.na(gr_2), 1, 0)) %>%
   #   View()
   
   message("Definir el gr que se utilizará")
   
   marco_viv_superman <- marco_viv_superman %>%  
-    mutate(grupo = as.character(gr_1)) %>% 
-    filter(grupo %in% unique(n_upm_sel)) } else{
+    mutate(grupo = as.character(gr_1)) %>% # aqui tendria que meter mano con gr_1 o gr_2 
+    group_by(id_conglomerado) %>% 
+    filter(grupo %in% unique(n_upm_sel)) %>% 
+    ungroup()} else{
   print("No existen SUPERMANZANAS para este periodo")
 }
   
+table(marco_viv_superman$id_conglomerado, marco_viv_superman$grupo, useNA = "ifany")
+table(marco_viv_superman$grupo,useNA = "ifany")
 
 #grupo es igual a gr_1
 # marco_viv_superman <- base_ocupada %>% 
@@ -338,8 +339,11 @@ muestra_usm_myc <- muestra_usm_myc %>%
          ncanton = gsub(ncanton,pattern = "\\(|\\)",replacement = ""))
 
 sum(is.na(muestra_usm_myc$calle))
-muestra_usm_myc$calle[615]
-muestra_usm_myc$jefehoga[2753]
+colSums(is.na(muestra_usm_myc))
+apply(muestra_usm_myc, 2, function(x) sum(is.na(x)))
+muestra_usm_myc$calle[858]
+
+muestra_usm_myc$jefehoga[897]
 
 # -----------------------------------------------------------------------------
 # Exportando resultados
@@ -355,6 +359,6 @@ rio::export(muestra_usm_inter, # base que tiene los pik
        paste0("productos/02_muestra_usm/periodo_",periodo,"/muestra_usm_inter.rds"))
 
 
-apply(muestra_usm_myc, 2, function(x) sum(is.na(x)))
+
 
 

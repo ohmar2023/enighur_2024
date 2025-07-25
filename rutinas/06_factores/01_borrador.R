@@ -6,7 +6,7 @@ source("rutinas/99_librerias/librerias.R")
 # ------------------------------------------------------------------------------
 # Base de cobertura total (cobertura acumulada al periodo n)
 #-------------------------------------------------------------------------------
-
+  
 cobertura_base_total <- import("intermedios/04_cobertura/cobertura_base_total.rds")
 
 # ------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ muestra_primera_etapa <- muestra_primera_etapa %>%
 colSums(is.na(muestra_primera_etapa))
 n_distinct(muestra_primera_etapa)
 muestra_primera_etapa %>% filter(is.na(Ni_enlist )) %>% View()
-
+ 
 
 
 

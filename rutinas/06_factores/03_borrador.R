@@ -65,8 +65,10 @@ aux_1 <- marco_viv_muestra_acum_enlist %>%
 # dim(base_enlist_acum)
 # n_distinct(aux_1$id_upm)
 # table(aux_1$c_ocup)
-# base_enlist_acum <- rbind(base_enlist_acum, aux_1)
-# 
+
+ base_enlist_acum <- rbind(base_enlist_acum, aux_1)
+
+  
 # n_distinct(base_enlist_acum$id_upm)
 
 # ------------------------------------------------------------------------------
