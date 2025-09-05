@@ -54,7 +54,7 @@ cobertura_base_total_1 %>%
 # Leeomos la información de la actualización cartográfica 
 #-------------------------------------------------------------------------------
 
-periodo_ref <- 8
+periodo_ref <- 9
 source("rutinas/06_factores/03_borrador.R")
 
 # ------------------------------------------------------------------------------
