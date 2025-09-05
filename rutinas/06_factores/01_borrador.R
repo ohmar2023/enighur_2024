@@ -17,13 +17,13 @@ marco_upm <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds") %>%
   group_by(estrato) %>% 
   mutate(Nh = sum(Mi)) %>% #cantidad de viviendas por estrato
   ungroup() %>% 
-  rename(Ni = Mi) #secambia el nombre, es la cantidad de vivindas por UPM
+  rename(Ni = Mi) #secambia el nombre, es la cantidad de vivindas por UPM. 
 
 # ------------------------------------------------------------------------------
 # Cobertura total
 # ------------------------------------------------------------------------------
 
-#cobertura_base_total <- import("intermedios/04_cobertura/cobertura_base_total.rds") 
+#cobertura_base_total <- import("intermedios/04_cobertura/cobertura_base_total.rds")  
 
 cobertura_base_total_1 <- cobertura_base_total %>% 
   group_by(id_upm) %>% 
@@ -51,9 +51,10 @@ cobertura_base_total_1 %>%
 
 
 # ------------------------------------------------------------------------------
-# Leeomos la infromación de la actualziación cartográfica 
+# Leeomos la información de la actualización cartográfica 
 #-------------------------------------------------------------------------------
 
+periodo_ref <- 8
 source("rutinas/06_factores/03_borrador.R")
 
 # ------------------------------------------------------------------------------

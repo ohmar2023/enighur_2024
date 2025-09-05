@@ -11,9 +11,9 @@ source("rutinas/99_librerias/librerias.R")
 # Parámetros
 # -----------------------------------------------------------------------------
 
-periodo <- 10
+periodo <- 11
 # año/mes/dia
-fecha <- "2025_07_24"
+fecha <- "2025_08_26"
 
 # -----------------------------------------------------------------------------
 # script: 01_1_preparacion_bdd.R
@@ -25,7 +25,7 @@ fecha <- "2025_07_24"
 
 source("rutinas/03_enlistamiento/01_preparacion_bdd.R")
 
-# -----------------------------------------------------------------------------
+  # -----------------------------------------------------------------------------
 # script: 02_1_novedades.R
 # Este script solo necesita base.rds
 # Identifica novedades con respecto a las variables gegráficas

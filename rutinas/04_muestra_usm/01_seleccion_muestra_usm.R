@@ -7,8 +7,8 @@ source("rutinas/99_librerias/librerias.R")
 # Parametros:
 # -----------------------------------------------------------------------------
 
-periodo = 10
-fecha <- "2025_07_24" # se usa como semilla, ya le transforma en numeric
+periodo = 11
+fecha <- "2025_08_26" # se usa como semilla, ya le transforma en numeric
 
 # -----------------------------------------------------------------------------
 # Lectura de base-DICA : Considera el periodo
@@ -54,7 +54,7 @@ particion_manzanas_li_60 <- read_rds("insumos/99_supermanzanas/particion_manzana
 # Importando muestra
 # -----------------------------------------------------------------------------
 
-muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_006.xlsx")
+muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_007.xlsx")
   
 # -----------------------------------------------------------------------------
 # Lectura UPM´s sin enlistar
@@ -341,9 +341,8 @@ muestra_usm_myc <- muestra_usm_myc %>%
 sum(is.na(muestra_usm_myc$calle))
 colSums(is.na(muestra_usm_myc))
 apply(muestra_usm_myc, 2, function(x) sum(is.na(x)))
-muestra_usm_myc$calle[858]
-
-muestra_usm_myc$jefehoga[897]
+muestra_usm_myc$calle[558]
+muestra_usm_myc$jefehoga[547]
 
 # -----------------------------------------------------------------------------
 # Exportando resultados

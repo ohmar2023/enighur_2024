@@ -11,7 +11,7 @@ if(unique(base$periodo_nuevo) != as.numeric(periodo)){
   message("Error: Revisar el periodo en el que estamos")
 }
 
-muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_006.xlsx")
+muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_007.xlsx")
 
 # -----------------------------------------------------------------------------
 # Lectura base de correspondencia y novedades - DICA

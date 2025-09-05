@@ -7,7 +7,7 @@ source("rutinas/99_librerias/librerias.R")
 # Parámetros
 # -----------------------------------------------------------------------------
 
-periodo <- 7
+periodo <- 9
 p <- periodo
 periodo <- str_pad(periodo,2,"left","0")
 
@@ -19,6 +19,7 @@ ruta <- paste0("intermedios/04_cobertura/cobertura_base_total.rds")
 
 cobertura_base <- readRDS(ruta) %>% 
   filter(periodo == p)
+
 
 # -----------------------------------------------------------------------------
 # Descriptivo periodo 
@@ -93,5 +94,8 @@ addWorksheet(wb, "viv_cober_no_muestra")
 
 writeData(wb, sheet = "viv_muestra_no_cober", viv_muestra_no_cober)
 writeData(wb, sheet = "viv_cober_no_muestra", viv_cober_no_muestra)
+
 saveWorkbook(wb, paste0(ruta_exp, paste0("/nov_cob_per_",periodo,".xlsx")), overwrite = T)
+
+
 

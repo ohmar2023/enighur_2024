@@ -102,6 +102,8 @@ sum(control$tre_3, na.rm = T) +
   sum(control$tne_2)
 
 
-rio::export(wk2, "wk2_1er_resultado.xlsx")
+rio::export(wk2, "wk2_per_08_resultado.xlsx")
+
+
 
 

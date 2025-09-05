@@ -13,7 +13,7 @@ source("rutinas/99_librerias/librerias.R")
 # Lectura base de cobertura
 # -----------------------------------------------------------------------------
 
-periodo <- 7
+periodo <- 9
 periodo <- str_pad(periodo, 2, "left", "0")
 
 # -----------------------------------------------------------------------------
@@ -26,7 +26,7 @@ ruta <- paste0("intermedios/04_cobertura/")
 cobertura_base_total <- import(paste0(ruta,"cobertura_base_total.rds")) %>% 
   filter(!is.na(rvo)) %>% 
   group_by(id_upm, id_upm_no_orden) %>% 
-  mutate(n_fila = row_number(),
+  mutate(n_fila = row_number(), 
          i_menor = which.min(rvo)) %>%
   filter(n_fila == unique(i_menor)) %>% 
   ungroup() 
@@ -45,7 +45,7 @@ control_cobertura[is.na(control_cobertura)] <- 0
 control_cobertura <- control_cobertura %>% 
   mutate(control_12 = ed + ne + nr + re)  
 
-control_cobertura %>% View("control_cobertura")
+#control_cobertura %>% View("control_cobertura")
 
 # -----------------------------------------------------------------------------
 # Tabla condición de ocupación
@@ -62,7 +62,7 @@ c_acum_aux <- c_ocup_acum[,c(2:5)]
 c_acum_aux[is.na(c_acum_aux)] <- 0
 c_ocup_acum <- cbind(c_ocup_acum[,1], c_acum_aux)
 
-cobertura_base_total %>% group_by(zonal) %>% summarise(n())
+#cobertura_base_total %>% group_by(zonal) %>% summarise(n())
 
 
 

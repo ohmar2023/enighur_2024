@@ -8,7 +8,7 @@ source("rutinas/99_librerias/read_zip.R")
 # Lectura de la base de cobertura: Necesitamos indicar el periodo
 # -----------------------------------------------------------------------------
 
-periodo <- 7
+periodo <- 9
 periodo <- str_pad(periodo,2,"left","0")
 
 # -----------------------------------------------------------------------------
@@ -93,6 +93,7 @@ cobertura_base_total <- cobertura_base_total %>%
 # -----------------------------------------------------------------------------
 
 table(cobertura_base_total$periodo)
+table(cobertura_base_total$periodo, cobertura_base_total$rvo, useNA = "ifany")
 n_distinct(cobertura_base_total$id_upm_no_orden)
 
 # -----------------------------------------------------------------------------
@@ -103,19 +104,4 @@ ruta <- paste0("intermedios/04_cobertura/")
 rio::export(cobertura_base_total, 
             paste0(ruta,"cobertura_base_total.rds"), overwrite = FALSE)
 
-
-
-# cobertura_base_total %>%
-#   group_by(id_upm_no_orden) %>%
-#   mutate( n = n()) %>%
-#   ungroup() 
-#   #filter(n > 1, zonal == "CENTRO") %>%
-#   
-#   cobertura_base_total %>% 
-#   group_by(id_upm, n_rvo) %>%
-#   summarise(n = n()) %>%
-#   pivot_wider(names_from = n_rvo,
-#               values_from = n) %>%
-#   filter(Completa < 6 ) %>% 
-#   View()
 

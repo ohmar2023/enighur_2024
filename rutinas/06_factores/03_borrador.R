@@ -6,12 +6,12 @@
 
 # ------------------------------------------------------------------------------
 # Juntando todos los marcos de viv elaborados previos a la selección de la muestra
-# De esta base se selecciónó en cada periodo la muestra
+# De esta base se selecciónó en cada periodo la muestra de viviendas
 # ------------------------------------------------------------------------------
 
 marco_viv_muestra_acum_enlist <- NULL
 
-for (i in c(1:7)){
+for (i in c(1:periodo_ref)){
   periodo <- i
   periodo <- str_pad (periodo, 2, "left", "0")
   ruta <- paste0("productos/02_muestra_usm/",
@@ -27,7 +27,7 @@ for (i in c(1:7)){
 
 base_enlist_acum <- NULL
 
-for (i in c(1:7)){
+for (i in c(1:periodo_ref)){
   periodo <- i
   periodo <- str_pad(periodo, 2, "left", "0")
   ruta <- paste0("intermedios/03_enlistamiento/01_concistencia/",
@@ -52,10 +52,10 @@ base_enlist_acum <- base_enlist_acum %>%
   select(all_of(n_variables))
 
 # ------------------------------------------------------------------------------
-# Entre las dos bases previas me quedo con una sola que contegna todo la info
+# Entre las dos bases previas me quedo con una sola que contenga toda la info
 # del levantamiento de actualización
-# Hago este mix de bases pirque hay UPM que no son actualziadas y se las saca del precenso
-# Entonces
+# Hago este mix de bases porque hay UPM que no son actualizadas y se las saca del precenso
+# Entonces al juntarlas ya tengo disponible todo lo que se junta para actualizar
 # ------------------------------------------------------------------------------
 
 aux_1 <- marco_viv_muestra_acum_enlist %>% 
@@ -68,14 +68,10 @@ aux_1 <- marco_viv_muestra_acum_enlist %>%
 
  base_enlist_acum <- rbind(base_enlist_acum, aux_1)
 
-  
 # n_distinct(base_enlist_acum$id_upm)
 
 # ------------------------------------------------------------------------------
-# Entre las dos bases previas me quedo con una sola que contegna todo la info
-# del levantamiento de actualización
-# Hago este mix de bases pirque hay UPM que no son actualziadas y se las saca del precenso
-# Entonces
+
 # ------------------------------------------------------------------------------
 
 base_act_acum_1 <- base_enlist_acum %>% 

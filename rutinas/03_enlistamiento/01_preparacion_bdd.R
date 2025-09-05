@@ -56,7 +56,7 @@ base <- base %>%
 # Agregando semana y periodo
 # -----------------------------------------------------------------------------
 
-muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_006.xlsx")
+muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_007.xlsx")
 base <- base %>% left_join(muestra %>% filter(!duplicated(id_upm)) %>% 
                              select(id_upm,semana_nueva,periodo_nuevo),by="id_upm")
 
@@ -160,10 +160,16 @@ if (unique(base$periodo_nuevo) != as.numeric(periodo)){
 message("Error: Revisar el periodo en el que estamos")}
 
 # -----------------------------------------------------------------------------
+# Codigo para periodo 11
+# -----------------------------------------------------------------------------
+
+#base <- base %>% filter(id_upm != "010450900201")
+
+# -----------------------------------------------------------------------------
 # Exportando
 # -----------------------------------------------------------------------------
 
-ruta_export <- paste0("intermedios/03_enlistamiento/01_concistencia/","periodo_",periodo)
+ruta_export <- paste0("intermedios/03_enlistamiento/01_concistencia/","periodo_", periodo)
 dir.create(ruta_export, showWarnings = F) 
 dir.exists(ruta_export)
 rio::export(base, paste0(ruta_export,"/base.rds"), overwrite = FALSE)
