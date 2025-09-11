@@ -172,7 +172,7 @@ c_ocup_acum
 ```
 \vspace{-1truemm}
 
-A continuación podemos evidenciar que la cobertura nacional está sobre el umbral establecido, sin embargo, a lo largo del informe, observaremos las deficiencias de cobertura que se presentan a otros niveles de desagregación.
+A continuación podemos evidenciar que la cobertura nacional está sobre el umbral establecido, sin embargo, a lo largo del informe observaremos las deficiencias de cobertura que se presentan a otros niveles de desagregación.
 
 $$\textbf{Gráfico 1:}\text{ Tasas de conformidad nacional acumulada}$$
 ```{r echo=F, fig.width=7, fig.height = 1.0, message=F, warning=F}
