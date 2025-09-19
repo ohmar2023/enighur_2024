@@ -627,8 +627,8 @@ FROM
 	inner join captura.capt_detalle_h c on (b.id_cab = c.cod_cab)
 	inner join muestra.mue_muestra_detalle d on (d.id_mue_det = a.cod_mue_det) and d.cod_muestra = 1
 	LEFT JOIN ( SELECT id_periodo, nombre FROM administracion.adm_periodo) e ON e.id_periodo = a.control4::integer
-	where b.clave like '${ident}%'
-	and a.zonal = 'C'
+	--where b.clave like '${ident}%'
+	--and a.zonal = 'C'
 	and b.estado_logico = true
 	and c.estado_logico = true
 ) sql1

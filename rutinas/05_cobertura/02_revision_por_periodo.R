@@ -7,7 +7,7 @@ source("rutinas/99_librerias/librerias.R")
 # Parámetros
 # -----------------------------------------------------------------------------
 
-periodo <- 9
+periodo <- 10 
 p <- periodo
 periodo <- str_pad(periodo,2,"left","0")
 

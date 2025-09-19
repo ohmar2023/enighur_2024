@@ -43,3 +43,4 @@ y <- x %>%
   select(name)
 
 write.table(y, "gitignoreauto.txt", row.names = F, col.names = F, quote = F)
+

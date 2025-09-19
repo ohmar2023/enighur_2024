@@ -7,7 +7,8 @@ source("rutinas/99_librerias/librerias.R")
 # Base de cobertura total (cobertura acumulada al periodo n)
 #-------------------------------------------------------------------------------
   
-cobertura_base_total <- import("intermedios/04_cobertura/cobertura_base_total.rds")
+cobertura_base_total <- import("intermedios/04_cobertura/cobertura_base_total.rds") %>% 
+  filter(periodo != 10)
 
 # ------------------------------------------------------------------------------
 # Marco UPM

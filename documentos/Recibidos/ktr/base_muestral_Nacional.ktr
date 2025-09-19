@@ -452,7 +452,7 @@
   <notepads>
   </notepads>
   <connection>
-    <name>conexion_enighur_ac</name>
+    <name>conexion</name>
     <server>172.16.2.105</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
@@ -520,7 +520,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>conexion_enighur_ac</connection>
+    <connection>conexion</connection>
     <sql>SELECT 
 cordinacion_zonal,
 pro,
@@ -664,7 +664,7 @@ order by clave, num_det, orden</sql>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>160</xloc>
+      <xloc>144</xloc>
       <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
@@ -694,7 +694,7 @@ order by clave, num_det, orden</sql>
     <fileNameField/>
     <create_parent_folder>Y</create_parent_folder>
     <file>
-      <name>/D:/OMAR LLAMBO/Proyectos/enighur_2024/insumos/03_enlistamiento</name>
+      <name>D:\ENIGHUR_AC\Base_muestral_${nombre_csv}_${ident}</name>
       <servlet_output>N</servlet_output>
       <do_not_open_new_file_init>N</do_not_open_new_file_init>
       <extention>csv</extention>
@@ -1262,7 +1262,7 @@ order by clave, num_det, orden</sql>
     </remotesteps>
     <GUI>
       <xloc>464</xloc>
-      <yloc>112</yloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

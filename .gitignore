@@ -9,11 +9,14 @@ insumos/00_geo_shapes
 .RDataTmp2
 /insumos/00_geo_shapes/BNCPV22.gpkg
 /insumos/02_muestra_upm/pobl_machala/poblacion2022_machala.rds
+/insumos/03_enlistamiento/Base_muestral____20250918_093421_descargada_ktr_antiguo.csv
 /insumos/03_enlistamiento/periodo_01/2024_12_11/enighur_j2.gpkg
 /insumos/03_enlistamiento/periodo_01/2024_12_13/enighur_j2.gpkg
 /insumos/03_enlistamiento/periodo_09/Base_muestral___20250623_095031.csv
 /insumos/03_enlistamiento/periodo_10/Base_muestral___20250724_140509.csv
 /insumos/03_enlistamiento/periodo_11/Base_muestral___20250825_143533.csv
+/insumos/03_enlistamiento/periodo_12/Base_muestral___20250919_163539.csv
+/insumos/03_enlistamiento_20250918_142345_xxxx.csv
 /insumos/99_gpk_upm_muestra/dpa/cantones.gpkg
 /insumos/99_gpk_upm_muestra/dpa/parroquias.gpkg
 /insumos/99_marco_viv_precenso/marco_viv_ocu_nap.rds

@@ -5,10 +5,10 @@ source("rutinas/99_librerias/librerias.R")
 
 # -----------------------------------------------------------------------------
 # Parametros:
-# -----------------------------------------------------------------------------
+  # -----------------------------------------------------------------------------
 
-periodo = 11
-fecha <- "2025_08_26" # se usa como semilla, ya le transforma en numeric
+periodo = 12
+fecha <- "2025_09_19" # se usa como semilla, ya le transforma en numeric
 
 # -----------------------------------------------------------------------------
 # Lectura de base-DICA : Considera el periodo
@@ -54,7 +54,7 @@ particion_manzanas_li_60 <- read_rds("insumos/99_supermanzanas/particion_manzana
 # Importando muestra
 # -----------------------------------------------------------------------------
 
-muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_007.xlsx")
+muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_008.xlsx")
   
 # -----------------------------------------------------------------------------
 # Lectura UPM´s sin enlistar
@@ -121,6 +121,14 @@ marco_viv_superman <- base_ocupada %>%
   filter(id_conglomerado %in% upm_super_man$id_conglomerado) %>% 
   left_join(select(particion_manzanas_li_60,id_edif,grupo), by= "id_edif") 
 
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+marco_viv_superman <- marco_viv_superman %>% 
+  mutate(grupo = ifelse(man_sec_21 %in% c("170184015007002"), 1, grupo))
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+
 table(marco_viv_superman$id_conglomerado, marco_viv_superman$grupo, useNA = "ifany")
 table(marco_viv_superman$grupo,useNA = "ifany")
 
@@ -167,7 +175,7 @@ if ( dim(marco_viv_superman)[1] !=0 ) {
   # cbind(marco_viv_superman,gr_1,gr_2) %>% select(man_sec_21,grupo,gr_1,gr_2) %>%
   #   mutate(control = ifelse(gr_1 == gr_2 & !is.na(gr_1) & !is.na(gr_2), 1, 0)) %>%
   #   View()
-  
+
   message("Definir el gr que se utilizará")
   
   marco_viv_superman <- marco_viv_superman %>%  
@@ -290,7 +298,7 @@ muestra_usm %>% group_by(id_upm) %>% summarise(n()) %>% View()
 
 # -----------------------------------------------------------------------------
 #  Formato MyC : Base se carga al sistema para generar los MyC
-# -----------------------------------------------------------------------------
+  # -----------------------------------------------------------------------------
 
 muestra_usm_myc <- muestra_usm %>% select(no_orden = no_orden,
                                           id_upm,
@@ -356,6 +364,9 @@ rio::export(marco_viv_muestra, # base marco
 
 rio::export(muestra_usm_inter, # base que tiene los pik
        paste0("productos/02_muestra_usm/periodo_",periodo,"/muestra_usm_inter.rds"))
+
+
+
 
 
 

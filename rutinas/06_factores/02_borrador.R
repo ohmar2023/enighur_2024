@@ -39,7 +39,11 @@ wk2 <- wk1 %>%
          tnr_h = sum(nr * d2)) %>% 
   ungroup() %>% 
   mutate(a3h = (tre_h + tnr_h)/tre_h,
-         d3 = a3h * d2)
+         d3 = a3h * d2) %>% 
+  mutate(Nh_est = ceiling(d1 * 12)) %>% 
+  group_by(estrato) %>% 
+  mutate(Nh_est = round(sum(Nh_est), 0)) %>% 
+  ungroup()
 
 
 control <- wk2 %>% 

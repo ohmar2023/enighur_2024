@@ -56,7 +56,7 @@ base <- base %>%
 # Agregando semana y periodo
 # -----------------------------------------------------------------------------
 
-muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_007.xlsx")
+muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_008.xlsx")
 base <- base %>% left_join(muestra %>% filter(!duplicated(id_upm)) %>% 
                              select(id_upm,semana_nueva,periodo_nuevo),by="id_upm")
 
