@@ -46,7 +46,7 @@ header-includes:
     {\Huge\bfseries \textcolor{trueblue} {ENIGHUR} \par}
     \vspace{0.2   cm}
     
-    {\Large\bfseries \textcolor{trueblue} {Periodo de referencia: IX} \par}
+    {\Large\bfseries \textcolor{trueblue} {Periodo de referencia: X} \par}
     \vspace{1cm}
     
     {\Large  \textcolor{trueblue}{Dirección de Infraestructura Estadística y Muestreo \\ 
@@ -57,7 +57,7 @@ header-includes:
     {\large  \textcolor{trueblue}{Omar LLambo} \par}
     \vspace{0.25cm}
     
-    %{\Large \textcolor{trueblue}{Julio 2025 } \par}
+    %{\Large \textcolor{trueblue}{Agosto 2025 } \par}
     
     \vfill
     
@@ -194,7 +194,7 @@ graf_elegibilidad_zon_acum
 
 ## Tasas de conformidad por periodo
 
-Se presenta la información de las tasas de conformidad desde el periodo 01 hasta el periodo `r periodo`. Los periodos más deficientes a nivel de cobertura son el 01 y el 02. El periodo 09 presenta una desmejora con respecto a la calidad de cobertura de los dos periodos que lo preceden.
+Se presenta la información de las tasas de conformidad desde el periodo 01 hasta el periodo `r periodo`. Los periodos más deficientes a nivel de cobertura son el 01 y el 02. El periodo 10 presenta una desmejora con respecto a la calidad de cobertura de los cinco periodos que lo preceden.
 
 $$\textbf{Gráfico 3:}\text{ Tasas de conformidad por periodo}$$
 ```{r echo=F, fig.width=7, fig.height = 2.5, message=F, warning=F}
@@ -224,13 +224,20 @@ Podemos apreciar en la gráfica 5 que el dominio que presenta más deficiencia e
 
 
 $$\textbf{Gráfico 5:}\text{ Tasas de conformidad por cantón}$$
-```{r echo=F, fig.width=7, fig.height = 3.5, message=F, warning=F}
+```{r echo=F, fig.width=7, fig.height = 2.0, message=F, warning=F}
 
 graf_elegibilidad_canton_auto_acum
 
 ```
 
+Con el objetivo de poder ahondar más en la problemática referente a la cobertura de los cantones autorepresetados, se presenta la gráfica 6 en la que la información se encuentra desagregada por estratos. Los niveles más bajos se presentan en Guayaquil-Urbano-Alto, Quito-Urbano-Alto, Cuenca-Urbano-Alto, Santo Domingo-Urbano-Alto.
 
+$$\textbf{Gráfico 6:}\text{ Tasas de conformidad por cantón-estrato}$$
+```{r echo=F, fig.width=7, fig.height = 4.0, message=F, warning=F}
+
+graf_elegibilidad_canton_auto_acum_estrato 
+
+```
 
 \newpage
 
@@ -246,19 +253,19 @@ $$\textbf{Tabla 2: }\text{Tasas de conformidad a nivel de UPM}$$
 tabla_tasas_conf_upm_zonal_aux <- tabla_tasas_conf_upm_zonal %>% 
   mutate(porcentaje = format(paste0(porcentaje,"%"), justify = "right")) %>% 
   pivot_wider(id_cols = c("zonal"), names_from = Grupo, values_from = porcentaje) %>% 
-  mutate(`Entre 50% - 75%` = format(`Entre 50% - 75%` , justify = "right" ))
+  mutate(`Entre 50% - 80%` = format(`Entre 50% - 80%` , justify = "right" ))
 
 tabla_tasas_conf_upm_zonal_aux[is.na(tabla_tasas_conf_upm_zonal_aux)] <- "0.00%"
 
 tabla_tasas_conf_upm_zonal_aux %>%   select(Zonal = zonal, 
-                                       "Mayor a 75%", "Entre 50% - 75%" , "Menor a 50%" )
+                                       "Mayor a 80%", "Entre 50% - 80%" , "Menor a 50%" )
 
 
 # pandoc.table(tabla_tasas_conf_upm_zonal_aux %>%   select(Zonal = zonal, 
 #                                           "Mayor a 75%", "Entre 50% - 75%" , "Menor a 50%"  ), 
 #              justify=c("right","right","right", "right")) 
 ```
-$$\textbf{Gráfico 6: }\text{Tasas de conformidad a nivel de UPM}$$
+$$\textbf{Gráfico 7: }\text{Tasas de conformidad a nivel de UPM}$$
 ```{r echo=F, fig.width = 10.0, fig.height = 6.5, message=F, warning=F}
 
 graf_tasas_conf_upm_zonal
@@ -269,7 +276,7 @@ graf_tasas_conf_upm_zonal
 \newpage
 \textcolor{trueblue}{\section{Evaluación de la efectividad por UPM }}
 
-En el presente apartado se evalúa la UPM como Efectiva (si su TRE es mayor o igual al 75%) y No efectiva (si su TRE es menor al 75%), de esta manera podemos evaluar por zonal el comportamiento en estas dos categorías. También es de interés detectar una posible concentración en determinadas zonas geográficas de aquellas UPM catalogadas como "No efectivas".
+En el presente apartado se evalúa la UPM como Efectiva (si su TRE es mayor o igual al 80%) y No efectiva (si su TRE es menor al 80%), de esta manera podemos evaluar por zonal el comportamiento en estas dos categorías. También es de interés detectar una posible concentración en determinadas zonas geográficas de aquellas UPM catalogadas como "No efectivas".
 
 ```{r echo=F, fig.width = 10.0, fig.height = 6.5, message=F, warning=F}
 
@@ -302,7 +309,7 @@ mapa_upm_cobertura_sur
 Con el objetivo de evidenciar el avance del levantamiento a nivel de UPM, se muestra el siguiente gráfico que resume las UPM visitadas y las que están por visitar. Periodo de referencia: `r periodo_referencia_mapa`.
 
 
-$$\textbf{Gráfico 5:}\text{ Evaluación del levantamiento de la muestra}$$
+$$\textbf{Gráfico 8:}\text{ Evaluación del levantamiento de la muestra}$$
 ```{r echo=F, fig.width = 6.0, fig.height = 6.0, message=F, warning=F}
 
 mapa_muestra_nacional
@@ -312,7 +319,7 @@ mapa_muestra_nacional
 \newpage
 \textcolor{trueblue}{\section{Recomendaciones}}
 
-- Monitorear constantemente las provincias (particularmente: Pichincha, Guayas, Galápagos y Santo Domingo) y cantones (Particularmente: Quito, Cuenca, Guayaquil.  Santo Domingo y Manta) que presenten deficiencia en la cobertura (gráfica 4 y 5). Las problemáticas de estos dominios deben ser atendidas con urgencia a fin de poder tomar medidas correctivas para mejorar la cobertura, ya que de no alcanzar el umbral mínimo implicaría problemas en los posteriores procesos técnicos a desarrollar.
+- Monitorear constantemente las provincias (particularmente: Pichincha, Guayas, Galápagos y Santo Domingo) y cantones (Particularmente: Quito, Cuenca, Guayaquil.  Santo Domingo y Manta) que presenten deficiencia en la cobertura (gráfica 4, 5 y 6). Las problemáticas de estos dominios deben ser atendidas con urgencia a fin de poder tomar medidas correctivas para mejorar la cobertura, ya que de no alcanzar el umbral mínimo implicaría problemas en los posteriores procesos técnicos a desarrollar.
 
 - Establecer mecanismos que permitan controlar posibles errores que se generen en la actualización cartográfica con respecto a la asignación de la condición de ocupación de la vivienda, particularmente aquellas catalogadas como no elegibles (NE). La coordinación de la Litoral (gráfica 2) y, particularmente, la provincia de Galápagos (gráfico 4)  requieren atención para poder solventar y/o justificar este tipo de novedades.  
 

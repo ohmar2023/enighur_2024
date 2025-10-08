@@ -64,7 +64,7 @@ base <- base %>% left_join(muestra %>% filter(!duplicated(id_upm)) %>%
 # Agregando estrato
 # -----------------------------------------------------------------------------
 
-marco_upm <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds")
+marco_upm <- readRDS("insumos/02_muestra_upm/marco/marco_upm_23.rds")
 base <- base %>% left_join(select(marco_upm,estrato,area,id_upm),by = "id_upm" )
 
 # -----------------------------------------------------------------------------

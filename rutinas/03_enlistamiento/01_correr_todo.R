@@ -13,7 +13,7 @@ source("rutinas/99_librerias/librerias.R")
 
 periodo <- 12
 # año/mes/dia
-fecha <- "2025_09_19"
+fecha <- "2025_09_22"
 
 # -----------------------------------------------------------------------------
 # script: 01_1_preparacion_bdd.R

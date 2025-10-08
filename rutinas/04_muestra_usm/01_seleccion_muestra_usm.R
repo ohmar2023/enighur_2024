@@ -8,7 +8,7 @@ source("rutinas/99_librerias/librerias.R")
   # -----------------------------------------------------------------------------
 
 periodo = 12
-fecha <- "2025_09_19" # se usa como semilla, ya le transforma en numeric
+fecha <- "2025_09_22" # se usa como semilla, ya le transforma en numeric
 
 # -----------------------------------------------------------------------------
 # Lectura de base-DICA : Considera el periodo
@@ -122,12 +122,14 @@ marco_viv_superman <- base_ocupada %>%
   left_join(select(particion_manzanas_li_60,id_edif,grupo), by= "id_edif") 
 
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-marco_viv_superman <- marco_viv_superman %>% 
-  mutate(grupo = ifelse(man_sec_21 %in% c("170184015007002"), 1, grupo))
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+# # ------------------------------------------------------------------------------
+# # Se usó para el periodo 12 ya que dicha manzana no tiene grupo. Revisando se 
+# # nota que debe pertenecer al grupo 1.
+# # ------------------------------------------------------------------------------
+# marco_viv_superman <- marco_viv_superman %>% 
+#   mutate(grupo = ifelse(man_sec_21 %in% c("170184015007002"), 1, grupo))
+# # ------------------------------------------------------------------------------
+# # ------------------------------------------------------------------------------
 
 table(marco_viv_superman$id_conglomerado, marco_viv_superman$grupo, useNA = "ifany")
 table(marco_viv_superman$grupo,useNA = "ifany")
@@ -349,8 +351,8 @@ muestra_usm_myc <- muestra_usm_myc %>%
 sum(is.na(muestra_usm_myc$calle))
 colSums(is.na(muestra_usm_myc))
 apply(muestra_usm_myc, 2, function(x) sum(is.na(x)))
-muestra_usm_myc$calle[558]
-muestra_usm_myc$jefehoga[547]
+muestra_usm_myc$calle[58]
+muestra_usm_myc$jefehoga[247]
 
 # -----------------------------------------------------------------------------
 # Exportando resultados

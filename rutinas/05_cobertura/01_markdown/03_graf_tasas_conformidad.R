@@ -15,12 +15,12 @@
           tnr = nr / (re + nr + ne + ed),
           tne = ne / (re + nr + ne + ed),
           ted = ed / (re + nr + ne + ed)) %>% 
-  mutate(inter_tre = case_when(tre >= 0.75 ~ "Mayor a 75%",
-                               tre >= 0.50 & tre < 0.75 ~ "Entre 50% - 75%",
+  mutate(inter_tre = case_when(tre >= 0.80 ~ "Mayor a 80%",
+                               tre >= 0.50 & tre < 0.80 ~ "Entre 50% - 80%",
                                tre >= 0 & tre < 0.50 ~ "Menor a 50%", 
                                TRUE ~ "error")) %>% 
   mutate(id_conglomerado = substr(id_upm, 1,10), 
-         n_rvo_aux = ifelse(tre >= 0.75, "Efectiva", "No efectiva"))
+         n_rvo_aux = ifelse(tre >= 0.80, "Efectiva", "No efectiva"))
 
 
 # Calculo de tasas de conf UPM por zonal ---------------------------------------

@@ -1,2 +1,0 @@
-La versión 005 fue construida a partir de la versión 006.
-Esta versión incluye las UPM en Galápagos. 

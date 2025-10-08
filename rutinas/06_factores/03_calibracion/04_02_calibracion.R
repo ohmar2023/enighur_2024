@@ -1,0 +1,242 @@
+#
+rm(list = ls())
+#
+#library(cgwtools)
+library(rio)
+library(stringr)
+library(survey)
+library(srvyr)
+library(tidyverse)
+#
+# cargar funciones
+#
+source("rutinas/funciones/pp/tot_pob.R")
+#
+# cargamos base de cobertura
+#
+mes <- list.files("productos/05_cobertura")
+mes
+
+# para que mes es
+m <- max(length(mes))
+mes[m]
+
+base <- readRDS(paste0("productos/06_factores/01_mensual/", mes[m], "/personas.rds"))
+
+#
+# 1) creación de variables id_calib
+#
+cat("Número de grupos de calibración (dom_area_sexo_gedad):", "\n", n_distinct(base$id_calib))
+
+table(base$id_calib, useNA = "ifany")
+
+#
+# poblaciones objetivo para la calibracion
+#
+pob_nac <- tot_pob(dominio = "nac", si.area = T, si.sexo = T, gedad = c(0,14,15,99), anio = mes[m]) |> 
+  filter(area != 9)
+
+pob_gal <- tot_pob(dominio = "nac", si.area = T, si.sexo = F, gedad = c(0,99), anio = mes[m]) |> 
+  filter(area == 9)
+
+pob <- rbind(pob_nac, pob_gal) |> 
+  mutate(id_calib = paste(dominio, area, sexo, gedad, sep = "_")) |> 
+  select(id_calib, t)
+
+rm(pob_nac, pob_gal)
+
+print(sum(pob$t))
+ 
+#
+# totales estimados por Horvitz-Thompson por dominio y/o area y/o sexo
+#
+tp <- base |> 
+  group_by(id_calib) |> 
+  summarise(d = sum(fexp_aju))
+
+# comprobaciones: ver tp y t
+vis <- tp |> 
+  left_join(pob, by = "id_calib") |> 
+  mutate(dif = t - d) |> 
+  arrange(id_calib)|>
+  mutate(cotas = t/d)
+
+print(vis)
+
+rm(pob, tp)
+
+#
+# Calibración de hogar integrado: x es base de personas (hogar integrado)
+#
+
+apoyo_cal <- base |>
+  select(id_upm, mes, panelm, vivienda, hogar, persona,
+         id_calib, estrato, fexp_aju) |>
+  mutate(n = 1,
+         id_calib = paste0("cx", id_calib)) |>
+  pivot_wider(names_from = id_calib, values_from = n, values_fill = 0) |> 
+  ungroup()
+
+aux <- base |>
+  select(id_upm, mes, panelm, vivienda, hogar, 
+         id_calib, estrato, fexp_aju) |> # se utiliza el factor ajustado por cobertura
+  group_by(id_upm, panelm, vivienda, hogar) |> 
+  mutate(totper = n()) |> 
+  group_by(id_upm, mes, panelm, vivienda, hogar, estrato, fexp_aju, id_calib) |> 
+  summarise(totper = mean(totper),
+            n = n()) |> 
+  mutate(prom = n / totper,
+         id_calib = paste0("cx", id_calib)) |>
+  select(-n) |>
+  pivot_wider(names_from = id_calib, values_from = prom, values_fill = 0) |> 
+  ungroup() |>
+  select(-c(estrato, fexp_aju, totper))
+
+base_hi <- apoyo_cal |>
+  select(id_upm, mes, panelm, vivienda, hogar, persona, estrato, fexp = fexp_aju) |>
+  left_join(aux, by = c("id_upm", "mes", "panelm", "vivienda", "hogar"))
+
+rm(apoyo_cal, aux)
+
+diseno_hi <- base_hi |> 
+  left_join(base |> 
+              select(id_upm, mes, vivienda, hogar, persona, id_calib),
+            by = c("id_upm", "mes", "vivienda", "hogar", "persona")) |> 
+  as_survey(ids = id_upm,
+            strata = estrato,
+            weights = fexp,
+            nest = TRUE)
+#
+# Diseño de calibracion
+#
+totales <- setNames(vis$t, paste0("cx", vis$id_calib))
+totales
+
+var_independientes <- names(base_hi)[grepl("cx", names(base_hi))]
+var_independientes <- var_independientes[order(match(var_independientes, paste0("cx", vis$id_calib)))]
+var_independientes
+
+mc <- as.formula(
+  paste("~", 0, "+", paste(var_independientes, collapse = " + "))
+)
+
+calib_hi <- diseno_hi |> 
+  calibrate(formula = mc,
+            population = totales,
+            bounds = c(0.1, Inf))
+
+##### Estimaciones #####
+
+#diseño hogar
+estimado_cal_hi <- calib_hi |>
+  group_by(id_calib) |> 
+  summarise(survey_total()) |> 
+  data.frame()
+
+estimado_cal_hi
+vis
+
+summary(weights(calib_hi))
+
+hist(weights(calib_hi), 30)
+
+#
+# generar base a entregar.
+#
+base2 <- data.frame(id_upm = diseno_hi$variables$id_upm,
+                    mes = diseno_hi$variables$mes,
+                    panelm = diseno_hi$variables$panelm,
+                    vivienda = diseno_hi$variables$vivienda,
+                    hogar = diseno_hi$variables$hogar,
+                    persona = diseno_hi$variables$persona,
+                    estrato = diseno_hi$variables$estrato,
+                    fexp = diseno_hi$variables$fexp,
+                    fexp_cal = weights(calib_hi)) |> 
+  left_join(base |> 
+              select(id_upm, mes, vivienda, hogar, persona,
+                     pro, area, sexo, edad, id_calib),
+            by = c("id_upm", "mes", "vivienda", "hogar", "persona")) |> 
+  select(id_upm, panelm , vivienda, hogar, persona, mes, estrato,
+         id_calib, pro, area, sexo, edad, fexp, fexp_cal)
+
+colSums(is.na(base2))
+
+# guardado
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Verificacion que el fexp calibrado sea unico por hogar
+verific <- calibracion_hog_int |>
+  group_by(id_upm, mes, vivienda, hogar) |>
+  summarise(n_fexp = n_distinct(fexp_cal_hi))
+
+table(verific$n_fexp, useNA = "ifany")
+
+# emparejar factores en bases 
+
+base_fexp <- base |> 
+  full_join(calibracion_hog_int,
+            by = c("id_upm", "mes", "panelm", "vivienda", "hogar", "persona"))
+
+print("Comprobación dimensiones")
+print(dim(base)[1] == dim(base_fexp)[1])
+
+print("Totales poblacionales estimados")
+print(sum(base_fexp$fexp_teo))
+print(sum(base_fexp$fexp_aju))
+print(sum(base_fexp$fexp_cal_hi))
+print(sum(vis$t))
+
+# Verificacion de las poblaciones
+vis <- base_fexp |>
+  group_by(id_calib) |>
+  summarise(pob_hog_int = sum(fexp_cal_hi)) |> 
+  ungroup |> 
+  full_join(vis, by = "id_calib") |>
+  mutate(dif_pob_hog_int = t - pob_hog_int) |> 
+  select(id_calib, pp = t, est_previa = d, dif_previa = dif, cotas, est_cal = pob_hog_int, dif_cal = dif_pob_hog_int)
+
+print(paste0("Diferencia máxima sobre grupos de calibración hogar: ",
+             print(max(abs(vis$dif_cal)))))
+vis
+
+#
+# Guardar las bases
+#
+base_entrega <- base_fexp |> 
+  mutate(fexp_nor = fexp_aju/sum(fexp_aju)) |> 
+  select(id_viv_car, zonal, pro, area, estrato, id_upm, panelm, vivienda, hogar, persona, id_per,
+         mes, id_calib, fexp_cal_hi, fexp_nor) 
+
+saveRDS(base_fexp, file = paste0("productos/06_factores/01_mensual/", mes[m], "/personas_fexp.rds"))
+saveRDS(base_entrega, file = paste0("productos/06_factores/01_mensual/", mes[m], "/personas_fexp_", mes[m], ".rds"))
+export(vis, paste0("productos/06_factores/01_mensual/", mes[m], "/vis.xlsx"))
+
+
