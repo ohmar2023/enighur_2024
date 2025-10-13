@@ -7,6 +7,7 @@
 /insumos/03_enlistamiento/periodo_10/Base_muestral___20250724_140509.csv
 /insumos/03_enlistamiento/periodo_11/Base_muestral___20250825_143533.csv
 /insumos/03_enlistamiento/periodo_12/Base_muestral___20250922_091122.csv
+/insumos/03_enlistamiento/periodo_13/Base_muestral___20251013_121837.csv
 /insumos/99_gpk_upm_muestra/dpa/cantones.gpkg
 /insumos/99_gpk_upm_muestra/dpa/parroquias.gpkg
 /insumos/99_marco_viv_precenso/marco_viv_ocu_nap.rds

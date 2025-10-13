@@ -183,7 +183,7 @@ if ( dim(marco_viv_superman)[1] !=0 ) {
   marco_viv_superman <- marco_viv_superman %>%  
     mutate(grupo = as.character(gr_1)) %>% # aqui tendria que meter mano con gr_1 o gr_2 
     group_by(id_conglomerado) %>% 
-    filter(grupo %in% unique(n_upm_sel)) %>% 
+    #filter(grupo %in% unique(n_upm_sel)) %>% 
     ungroup()} else{
   print("No existen SUPERMANZANAS para este periodo")
 }

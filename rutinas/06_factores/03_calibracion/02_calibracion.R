@@ -13,7 +13,6 @@ library(survey)
 source("rutinas/99_librerias/librerias.R")
 source("rutinas/99_librerias/tot_pob.R")
 
-
 #
 # cargamos base de cobertura
 #
@@ -24,8 +23,8 @@ mes
 m <- max(length(mes))
 mes[m]
 
-base <- readRDS(paste0("productos/06_factores/01_mensual/", mes[m], "/personas.rds"))
-
+base <- readRDS(paste0("intermedios/04_cobertura/01_mensual/", mes[m], "/personas.rds"))
+base <- cobertura_base_total_personas
 #
 # 1) creación de variables id_calib
 #

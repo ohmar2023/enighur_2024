@@ -96,6 +96,9 @@ table(cobertura_base_total$periodo)
 table(cobertura_base_total$periodo, cobertura_base_total$rvo, useNA = "ifany")
 n_distinct(cobertura_base_total$id_upm_no_orden)
 
+sum(is.na(cobertura_base_total$rvo))
+cobertura_base_total %>% filter(is.na(rvo)) %>% View()
+
 # -----------------------------------------------------------------------------
 # Exportando base
 # -----------------------------------------------------------------------------
