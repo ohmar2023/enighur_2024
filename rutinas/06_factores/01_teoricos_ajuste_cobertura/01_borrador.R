@@ -56,7 +56,7 @@ cobertura_base_total_1 %>%
 #-------------------------------------------------------------------------------
 
 periodo_ref <- 9
-source("rutinas/06_factores/03_borrador.R")
+source("rutinas/06_factores/01_factores_teo_cobertura/03_borrador.R")
 
 # ------------------------------------------------------------------------------
 # Probabilidad de primera etapa.

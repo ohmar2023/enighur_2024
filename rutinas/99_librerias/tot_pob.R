@@ -1,6 +1,6 @@
 tot_pob <- function(dominio, si.area=F, si.sexo=F, gedad, anio){
   
-  pp <- readRDS("intermedios/06_factores/pp_provincias_cantones_area_sexo_edad.rds")
+  pp <- readRDS("insumos/05_factores/02_calibracion/pp_provincias_cantones_area_sexo_edad.rds")
   #dominio = "nac"; si.area = T; si.sexo = T; gedad = c(0, 14, 15, 99); anio = "202411"
   
   nc <- length(gedad)/2
