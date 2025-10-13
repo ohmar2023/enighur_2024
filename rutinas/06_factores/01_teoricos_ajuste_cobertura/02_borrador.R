@@ -116,8 +116,8 @@ sum(control$tre_2) +
 sum(control$tre_3, na.rm = T) +
   sum(control$tne_2)
 
-
-rio::export(wk2, "wk2_per_09_resultado.xlsx")
+ruta <- "intermedios/05_factores/01_teoricos_ajuste_cobertura/"
+rio::export(wk2,paste0(ruta, "wk2.rds"))
 
 
 
