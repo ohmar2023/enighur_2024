@@ -40,3 +40,11 @@ set.seed(as.numeric(gsub(fecha,pattern = "_",replacement = "")))
 
 Periodo 11: fecha <- "2025_08_26"
 set.seed(as.numeric(gsub(fecha,pattern = "_",replacement = ""))) 
+
+
+Periodo 12: fecha <- "2025_09_22"
+set.seed(as.numeric(gsub(fecha,pattern = "_",replacement = ""))) 
+
+
+Periodo 13: fecha <- "2025_10_16"
+set.seed(as.numeric(gsub(fecha,pattern = "_",replacement = ""))) 

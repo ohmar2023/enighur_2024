@@ -26,11 +26,11 @@ aux_2 <- aux_1 %>% filter(dif_Ni > 100) %>%
   group_by(pro) %>% 
   summarise(n_upm = n())
 
-aux_1 %>% filter(dif_Ni > 100) %>% View()
+#aux_1 %>% filter(dif_Ni > 100) %>% View()
 
 ylim <- c(0, 1.2*max(aux_2$n_upm))
 
-barplot(aux_2$n_upm , border=F , names.arg = aux$pro , 
+barplot(aux_2$n_upm , border=F , names.arg = aux_2$pro , 
         las = 2 , 
         col = c("darkgreen", "bisque", "darkorange",  "darkorange") , 
         ylim = ylim , 

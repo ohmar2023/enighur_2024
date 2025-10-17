@@ -1,33 +1,22 @@
-#
-rm(list = ls())
-#
-#library(cgwtools)
-library(rio)
-library(stringr)
 
-library(srvyr)
-library(tidyverse)
-#
-# cargar funciones
-library(survey)
+rm(list = ls())
+
 source("rutinas/99_librerias/librerias.R")
 source("rutinas/99_librerias/tot_pob.R")
 
-#
-# cargamos base de cobertura
-#
-mes <- "a25m06"
-mes
+mes <- "a25m06" 
 
-# para que mes es
-m <- max(length(mes))
-mes[m]
+# ------------------------------------------------------------------------------
+# Lectura base de personas
+#-------------------------------------------------------------------------------
 
-base <- readRDS(paste0("intermedios/04_cobertura/01_mensual/", mes[m], "/personas.rds"))
-base <- cobertura_base_total_personas
-#
-# 1) creación de variables id_calib
-#
+ruta <- "intermedios/05_factores/02_calibracion/"
+base <- import(paste0(ruta,"personas.rds"))
+
+#-------------------------------------------------------------------------------
+# Creación de variables id_calib
+#-------------------------------------------------------------------------------
+
 cat("Número de grupos de calibración (dom_area_sexo_gedad):", "\n", n_distinct(base$id_calib))
 
 table(base$id_calib, useNA = "ifany")
@@ -35,10 +24,10 @@ table(base$id_calib, useNA = "ifany")
 #
 # poblaciones objetivo para la calibracion
 #
-pob_nac <- tot_pob(dominio = "nac", si.area = T, si.sexo = T, gedad = c(0,99), anio = mes) |> 
+pob_nac <- tot_pob(dominio = "prov", si.area = T, si.sexo = T, gedad = c(0,99), anio = mes) |> 
   filter(area != 9)
 
-pob_gal <- tot_pob(dominio = "nac", si.area = T, si.sexo = F, gedad = c(0,99), anio = mes) |> 
+pob_gal <- tot_pob(dominio = "prov", si.area = T, si.sexo = F, gedad = c(0,99), anio = mes) |> 
   filter(area == 9)
 
 pob <- rbind(pob_nac, pob_gal) |> 
@@ -46,7 +35,6 @@ pob <- rbind(pob_nac, pob_gal) |>
   select(id_calib, t)
 
 rm(pob_nac, pob_gal)
-
 print(sum(pob$t))
  
 #
@@ -63,13 +51,23 @@ vis <- tp |>
   arrange(id_calib)|>
   mutate(cotas = t/d)
 
-print(vis)
+# Gráfica: lo expandido (d) vs. las proyecciones (t)
+ylim <- c(1.25 * min(vis$dif), 1 * max(vis$dif))
 
-rm(pob, tp)
+barplot(vis$dif , border=F , names.arg = vis$id_calib, 
+        las = 2 , 
+        col = c("darkgreen", "bisque", "darkorange",  "darkorange") , 
+        ylim = ylim , 
+        main = "Diferencia = Expandido - Proyecciones"
+)
 
-#
-# Calibración de hogar integrado: x es base de personas (hogar integrado)
-#
+#rm(pob, tp)
+
+#-------------------------------------------------------------------------------
+# Calibración de hogar integrado
+
+# apoyo_Cal: Los id_calibs como variables y llenas de 1 y 0. Igual que base.
+#-------------------------------------------------------------------------------
 
 apoyo_cal <- base |>
   select(id_upm, vivienda, hogar, persona,
@@ -83,7 +81,7 @@ aux <- base |>
   select(id_upm, vivienda, hogar, 
          id_calib, estrato, fexp_aju) |> # se utiliza el factor ajustado por cobertura
   group_by(id_upm, vivienda, hogar) |> 
-  mutate(totper = n()) |> 
+  mutate(totper = n()) |> #Solo cuento las personas en cada vivienda
   group_by(id_upm, vivienda, hogar, estrato, fexp_aju, id_calib) |> 
   summarise(totper = mean(totper),
             n = n()) |> 
@@ -108,9 +106,11 @@ diseno_hi <- base_hi |>
             strata = estrato,
             weights = fexp,
             nest = TRUE)
-#
-# Diseño de calibracion
-#
+
+#-------------------------------------------------------------------------------
+# Diseño de calibración
+#-------------------------------------------------------------------------------
+
 totales <- setNames(vis$t, paste0("cx", vis$id_calib))
 totales
 
@@ -127,7 +127,9 @@ calib_hi <- diseno_hi |>
             population = totales,
             bounds = c(0.1, Inf))
 
-##### Estimaciones #####
+#-------------------------------------------------------------------------------
+# Estimaciones
+#-------------------------------------------------------------------------------
 
 #diseño hogar
 estimado_cal_hi <- calib_hi |>
@@ -142,9 +144,10 @@ summary(weights(calib_hi))
 
 hist(weights(calib_hi), 30)
 
-#
-# generar base a entregar.
-#
+#-------------------------------------------------------------------------------
+# Generar base a entregar.
+#-------------------------------------------------------------------------------
+
 base2 <- data.frame(id_upm = diseno_hi$variables$id_upm,
                     vivienda = diseno_hi$variables$vivienda,
                     hogar = diseno_hi$variables$hogar,

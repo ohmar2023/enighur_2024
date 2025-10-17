@@ -7,8 +7,7 @@ source("rutinas/99_librerias/librerias.R")
 # Base de cobertura total (cobertura acumulada al periodo n)
 #-------------------------------------------------------------------------------
   
-cobertura_base_total <- import("intermedios/04_cobertura/cobertura_base_total.rds") %>% 
-  filter(periodo != 10)
+cobertura_base_total <- import("intermedios/04_cobertura/cobertura_base_total.rds") 
 
 # ------------------------------------------------------------------------------
 # Marco UPM
@@ -55,8 +54,8 @@ cobertura_base_total_1 %>%
 # Leeomos la información de la actualización cartográfica 
 #-------------------------------------------------------------------------------
 
-periodo_ref <- 9
-source("rutinas/06_factores/01_factores_teo_cobertura/03_borrador.R")
+periodo_ref <- 10
+source("rutinas/06_factores/01_teoricos_ajuste_cobertura/03_borrador.R")
 
 # ------------------------------------------------------------------------------
 # Probabilidad de primera etapa.

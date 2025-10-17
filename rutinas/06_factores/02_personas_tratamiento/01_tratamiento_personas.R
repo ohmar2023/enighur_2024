@@ -8,7 +8,7 @@ source("rutinas/99_librerias/read_zip.R")
 # Lectura de la base de cobertura: Necesitamos indicar el periodo
 # -----------------------------------------------------------------------------
 
-periodo <- 9
+periodo <- 10
 periodo <- str_pad(periodo,2,"left","0")
 
 #options(scipen = 999)
@@ -57,7 +57,7 @@ cobertura_base_total_personas <- cobertura_base_total_personas %>%
          sexo = p03,
          edad = p04,
          id_upm_no_orden = paste0(id_upm, vivienda),
-         id_persona = paste0(id_upm_no_orden, persona)) %>% 
+         id_persona = paste0(id_upm_no_orden, hogar, persona)) %>% 
   left_join(select(marco_upm, id_upm, estrato, pro, area), by = "id_upm") %>% 
   select(zonal, pro, id_upm, id_upm_no_orden, area, estrato, vivienda, hogar, 
          persona, id_persona, sexo, edad)

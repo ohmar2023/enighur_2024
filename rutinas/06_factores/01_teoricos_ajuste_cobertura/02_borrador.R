@@ -61,8 +61,7 @@ control <- wk2 %>%
 control_personas <- wk2 %>%  
   group_by(pro) %>% 
   mutate(personas = totper * d3) %>% 
-  summarise(personas = sum(personas)) %>% 
-  adorn
+  summarise(personas = sum(personas)) 
 
 
 ylim <- c(0, 1.2*max(control_personas$personas))

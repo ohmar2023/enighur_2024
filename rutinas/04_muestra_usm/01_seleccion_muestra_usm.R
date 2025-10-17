@@ -7,8 +7,8 @@ source("rutinas/99_librerias/librerias.R")
 # Parametros:
   # -----------------------------------------------------------------------------
 
-periodo = 12
-fecha <- "2025_09_22" # se usa como semilla, ya le transforma en numeric
+periodo <- 13
+fecha <- "2025_10_15" # se usa como semilla, ya le transforma en numeric
 
 # -----------------------------------------------------------------------------
 # Lectura de base-DICA : Considera el periodo
@@ -54,7 +54,7 @@ particion_manzanas_li_60 <- read_rds("insumos/99_supermanzanas/particion_manzana
 # Importando muestra
 # -----------------------------------------------------------------------------
 
-muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_008.xlsx")
+muestra <- import("productos/02_muestra_upm/muestra_upm_man_sec_fondo_rot_009.xlsx")
   
 # -----------------------------------------------------------------------------
 # Lectura UPM´s sin enlistar
@@ -88,7 +88,7 @@ marco_upm_no_lev <- readRDS("insumos/99_marco_viv_precenso/marco_viv_ocu_nap.rds
           ) %>% 
   left_join(muestra %>% filter(!duplicated(id_upm)) %>% 
               select(id_upm,semana_nueva,periodo_nuevo), by = "id_upm")}
-n_distinct(marco_upm_no_lev$id_upm)
+unique(marco_upm_no_lev$id_upm)
 # -----------------------------------------------------------------------------
 # Marco de viviendas super manzanas: Con el grupo ya sabriamos que edificio
 # corresponde a que upm. Sin embargo, existen casos en los que se crea una nueva
@@ -181,7 +181,7 @@ if ( dim(marco_viv_superman)[1] !=0 ) {
   message("Definir el gr que se utilizará")
   
   marco_viv_superman <- marco_viv_superman %>%  
-    mutate(grupo = as.character(gr_1)) %>% # aqui tendria que meter mano con gr_1 o gr_2 
+    mutate(grupo = as.character(gr_2)) %>% # aqui tendria que meter mano con gr_1 o gr_2 
     group_by(id_conglomerado) %>% 
     #filter(grupo %in% unique(n_upm_sel)) %>% 
     ungroup()} else{
@@ -300,7 +300,7 @@ muestra_usm %>% group_by(id_upm) %>% summarise(n()) %>% View()
 
 # -----------------------------------------------------------------------------
 #  Formato MyC : Base se carga al sistema para generar los MyC
-  # -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 muestra_usm_myc <- muestra_usm %>% select(no_orden = no_orden,
                                           id_upm,
@@ -351,8 +351,8 @@ muestra_usm_myc <- muestra_usm_myc %>%
 sum(is.na(muestra_usm_myc$calle))
 colSums(is.na(muestra_usm_myc))
 apply(muestra_usm_myc, 2, function(x) sum(is.na(x)))
-muestra_usm_myc$calle[58]
-muestra_usm_myc$jefehoga[247]
+muestra_usm_myc$calle[258]
+muestra_usm_myc$jefehoga[547]
 
 # -----------------------------------------------------------------------------
 # Exportando resultados
