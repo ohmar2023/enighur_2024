@@ -24,7 +24,7 @@ table(base$id_calib, useNA = "ifany")
 #
 # poblaciones objetivo para la calibracion
 #
-pob_nac <- tot_pob(dominio = "prov", si.area = T, si.sexo = T, gedad = c(0,99), anio = mes) |> 
+pob_nac <- tot_pob(dominio = "prov", si.area = T, si.sexo = F, gedad = c(0,99), anio = mes) |> 
   filter(area != 9)
 
 pob_gal <- tot_pob(dominio = "prov", si.area = T, si.sexo = F, gedad = c(0,99), anio = mes) |> 
@@ -34,7 +34,7 @@ pob <- rbind(pob_nac, pob_gal) |>
   mutate(id_calib = paste(dominio, area, sexo, gedad, sep = "_")) |> 
   select(id_calib, t)
 
-rm(pob_nac, pob_gal)
+#rm(pob_nac, pob_gal)
 print(sum(pob$t))
  
 #
@@ -49,15 +49,19 @@ vis <- tp |>
   left_join(pob, by = "id_calib") |> 
   mutate(dif = t - d) |> 
   arrange(id_calib)|>
-  mutate(cotas = t/d)
+  mutate(cotas = t/d, 
+         cotas = cotas - 1)
+  
 
 # Gráfica: lo expandido (d) vs. las proyecciones (t)
-ylim <- c(1.25 * min(vis$dif), 1 * max(vis$dif))
+#ylim <- c(1.25 * min(vis$cotas), 1 * max(vis$cotas))
 
-barplot(vis$dif , border=F , names.arg = vis$id_calib, 
+ylim <- c(0.7, 1.3)
+
+barplot(vis$cotas , border=F , names.arg = vis$id_calib, 
         las = 2 , 
         col = c("darkgreen", "bisque", "darkorange",  "darkorange") , 
-        ylim = ylim , 
+        #ylim = ylim , 
         main = "Diferencia = Expandido - Proyecciones"
 )
 
@@ -67,9 +71,10 @@ barplot(vis$dif , border=F , names.arg = vis$id_calib,
 # Calibración de hogar integrado
 
 # apoyo_Cal: Los id_calibs como variables y llenas de 1 y 0. Igual que base.
+#aux : 
 #-------------------------------------------------------------------------------
 
-apoyo_cal <- base |>
+apoyo_cal <- base |> 
   select(id_upm, vivienda, hogar, persona,
          id_calib, estrato, fexp_aju) |>
   mutate(n = 1,
@@ -77,11 +82,11 @@ apoyo_cal <- base |>
   pivot_wider(names_from = id_calib, values_from = n, values_fill = 0) |> 
   ungroup()
 
-aux <- base |>
+aux <- base |> 
   select(id_upm, vivienda, hogar, 
          id_calib, estrato, fexp_aju) |> # se utiliza el factor ajustado por cobertura
   group_by(id_upm, vivienda, hogar) |> 
-  mutate(totper = n()) |> #Solo cuento las personas en cada vivienda
+  mutate(totper = n()) |> #Solo cuento las personas en cada hogar
   group_by(id_upm, vivienda, hogar, estrato, fexp_aju, id_calib) |> 
   summarise(totper = mean(totper),
             n = n()) |> 
@@ -97,6 +102,10 @@ base_hi <- apoyo_cal |>
   left_join(aux, by = c("id_upm",  "vivienda", "hogar"))
 
 rm(apoyo_cal, aux)
+
+#-------------------------------------------------------------------------------
+# Diseño 
+#-------------------------------------------------------------------------------
 
 diseno_hi <- base_hi |> 
   left_join(base |> 

@@ -24,7 +24,7 @@ cobertura_base_total_personas <- readRDS(ruta)
 base <- cobertura_base_total_personas %>% 
   left_join(wk2 %>% select(id_upm, fexp_teo = d1, fexp_aju = d3), by = "id_upm") %>% 
   mutate( gedad = case_when(edad < 15 ~ 1, edad >= 15 ~ 1, T ~ NA),
-          sexo = 1,
+          sexo = 0,
     id_calib = case_when(pro == "20" ~ "20_9_0_1",
                        T ~ paste0(pro, "_", area, "_", sexo, "_", gedad))) %>%  
   # left_join(cob_viv %>% 
