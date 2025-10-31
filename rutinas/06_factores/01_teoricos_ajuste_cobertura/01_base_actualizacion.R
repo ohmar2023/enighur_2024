@@ -1,14 +1,16 @@
+# ------------------------------------------------------------------------------
+# El objetivo de este script es generar la información que proviene del proceso
+# de actualización cartográfica.
+# La base resultante es base_act_acum_1.
+# ------------------------------------------------------------------------------
 
-
-#rm(list = ls())
-
-#source("rutinas/99_librerias/librerias.R")
 
 # ------------------------------------------------------------------------------
 # Juntando todos los marcos de viv elaborados previos a la selección de la muestra
-# De esta base se selecciónó en cada periodo la muestra de viviendas
+# De esta base, en su momento,  se selecciónó en cada periodo la muestra de viviendas
 # ------------------------------------------------------------------------------
 
+periodo_ref <- 11
 marco_viv_muestra_acum_enlist <- NULL
 
 for (i in c(1:periodo_ref)){
@@ -21,8 +23,8 @@ for (i in c(1:periodo_ref)){
 }
 
 # ------------------------------------------------------------------------------
-# Juntando todas las bases de actualziación cartografica tal como me llegan 
-# Esta base no es procesada ni filtrada nada
+# Juntando todas las bases de actualziación cartografica.
+# Esta base no es procesada ni filtrada nada, bases sin modificaciones.
 # ------------------------------------------------------------------------------
 
 base_enlist_acum <- NULL
@@ -53,28 +55,34 @@ base_enlist_acum <- base_enlist_acum %>%
 
 # ------------------------------------------------------------------------------
 # Entre las dos bases previas me quedo con una sola que contenga toda la info
-# del levantamiento de actualización
+# del levantamiento de actualización.
 # Hago este mix de bases porque hay UPM que no son actualizadas y se las saca del precenso
-# Entonces al juntarlas ya tengo disponible todo lo que se junta para actualizar
+# Entonces al juntarlas ya tengo disponible todo lo que se junta para actualizar.
+
+# aux_1: Contiene la información del precenso de aquellas UPM que no fueron 
+#       actualzadas. Se pudo haber hecho mas simple, identificando dichas UPM
+#       y luego buscandolas en el precenso.
+
+# base_enlist_acum: Tiene la info de las upm actualizadas + las no actualizadas.
+#                   De esta manera tenemos la base madre que tiene los totales
+#                   que se requieren para los factores.
 # ------------------------------------------------------------------------------
 
 aux_1 <- marco_viv_muestra_acum_enlist %>% 
   filter(!id_upm %in% base_enlist_acum$id_upm) 
 
-# dim(aux_1)
-# dim(base_enlist_acum)
-# n_distinct(aux_1$id_upm)
-# table(aux_1$c_ocup)
+# ------------------------------------------------------------------------------
+# base_enlist_acum: Tiene la info de las upm actualizadas + las no actualizadas.
+# ------------------------------------------------------------------------------
 
  base_enlist_acum <- rbind(base_enlist_acum, aux_1)
 
-# n_distinct(base_enlist_acum$id_upm)
-
+# ------------------------------------------------------------------------------
+# base_act_acum_1: Contiene las variables necesarias para los factores:
+#                  Ni_enlist y Nh_enlis.                  
 # ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------
-
-base_act_acum_1 <- base_enlist_acum %>% 
+base_act_acum <- base_enlist_acum %>% 
   filter(grepl(c_ocup, pattern = "ocupada con|base ocupada|rechazo")) %>% 
   group_by(id_upm) %>% 
   mutate(Ni_enlist = n()) %>% #Cantidad de viviendas por upm
@@ -86,12 +94,17 @@ base_act_acum_1 <- base_enlist_acum %>%
   summarise() %>% 
   ungroup() 
   
-# colSums(is.na(base_act_acum_1))
-# n_distinct(base_act_acum_1$id_upm)
-# unique(base_act_acum_1$c_ocup)
-# #rio::export(base_act_acum_1, "base_act_acum_1.xlsx")
-# 
-# 
-# v_c_ocup <- unique(base_enlist_acum$c_ocup)
-# v_c_ocup[grepl(v_c_ocup, pattern = "ocupada con|base ocupada|rechazo")]
-# unique()
+# ------------------------------------------------------------------------------
+# Exportando                  
+# ------------------------------------------------------------------------------
+
+ruta <- "intermedios/05_factores/01_teoricos_ajuste_cobertura/"
+rio::export(base_act_acum, paste0(ruta, "base_act_acum.rds"))
+
+
+
+
+
+
+
+

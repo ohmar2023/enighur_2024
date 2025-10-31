@@ -49,21 +49,27 @@ vis <- tp |>
   left_join(pob, by = "id_calib") |> 
   mutate(dif = t - d) |> 
   arrange(id_calib)|>
-  mutate(cotas = t/d, 
-         cotas = cotas - 1)
+  mutate(cotas = t/d) %>% 
+  arrange(cotas) %>% 
+  mutate(aux_color = ifelse(cotas > 1, "1", "0"))
   
 
-# Gráfica: lo expandido (d) vs. las proyecciones (t)
+  # Gráfica: lo expandido (d) vs. las proyecciones (t)
 #ylim <- c(1.25 * min(vis$cotas), 1 * max(vis$cotas))
 
-ylim <- c(0.7, 1.3)
+ylim <- c(0.0, 1.15 * max(vis$cotas))
 
 barplot(vis$cotas , border=F , names.arg = vis$id_calib, 
         las = 2 , 
-        col = c("darkgreen", "bisque", "darkorange",  "darkorange") , 
-        #ylim = ylim , 
+        #col = c("darkgreen", "bisque", "darkorange",  "darkorange") , 
+        col = c("darkgreen", "darkorange"),
+        ylim = ylim , 
         main = "Diferencia = Expandido - Proyecciones"
-)
+) + abline(h = 1, col = c( "orange"),
+           lwd = 2,
+           lty = 2:3)
+
+
 
 #rm(pob, tp)
 
@@ -71,7 +77,7 @@ barplot(vis$cotas , border=F , names.arg = vis$id_calib,
 # Calibración de hogar integrado
 
 # apoyo_Cal: Los id_calibs como variables y llenas de 1 y 0. Igual que base.
-#aux : 
+# aux : 
 #-------------------------------------------------------------------------------
 
 apoyo_cal <- base |> 
@@ -88,7 +94,7 @@ aux <- base |>
   group_by(id_upm, vivienda, hogar) |> 
   mutate(totper = n()) |> #Solo cuento las personas en cada hogar
   group_by(id_upm, vivienda, hogar, estrato, fexp_aju, id_calib) |> 
-  summarise(totper = mean(totper),
+  summarise(totper = mean(totper), #la media del total de personas
             n = n()) |> 
   mutate(prom = n / totper,
          id_calib = paste0("cx", id_calib)) |>
@@ -136,22 +142,24 @@ calib_hi <- diseno_hi |>
             population = totales,
             bounds = c(0.1, Inf))
 
+summary(weights(calib_hi))
+
+hist(weights(calib_hi), 30)
+
 #-------------------------------------------------------------------------------
 # Estimaciones
 #-------------------------------------------------------------------------------
 
 #diseño hogar
-estimado_cal_hi <- calib_hi |>
-  group_by(id_calib) |> 
-  summarise(survey_total()) |> 
-  data.frame()
+# estimado_cal_hi <- calib_hi |>
+#   group_by(id_calib) |> 
+#   summarise(survey_total()) |> 
+#   data.frame()
+# 
+# estimado_cal_hi
+# vis
 
-estimado_cal_hi
-vis
 
-summary(weights(calib_hi))
-
-hist(weights(calib_hi), 30)
 
 #-------------------------------------------------------------------------------
 # Generar base a entregar.
@@ -173,13 +181,28 @@ base2 <- data.frame(id_upm = diseno_hi$variables$id_upm,
 
 colSums(is.na(base2))
 
-# guardado
+# grafica
 
+aux_base <- base2 %>%
+  data.frame() %>% 
+  filter(!duplicated(id_upm)) %>% 
+  mutate(cotas = fexp_cal / fexp) %>% 
+  arrange(cotas)
+ 
 
+ylim <- c(0.0, 1.15 * max(aux_base$cotas))
 
+barplot(as.vector(aux_base$cotas) , border=F , names.arg = aux_base$id_upm, 
+        las = 2 , 
+        #col = c("darkgreen", "bisque", "darkorange",  "darkorange") , 
+        #col = c("darkgreen", "darkorange"),
+        ylim = ylim , 
+        main = "Cotas = Calibrado / Ajustado"
+) + abline(h = 1, col = c( "orange"),
+           lwd = 2,
+           lty = 2:3)
 
-
-
+  
 
 
 

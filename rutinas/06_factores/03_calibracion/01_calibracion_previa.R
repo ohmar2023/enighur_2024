@@ -19,6 +19,7 @@ cobertura_base_total_personas <- readRDS(ruta)
 
 # ------------------------------------------------------------------------------
 # Creación de id de calibración
+# Se agrega a la abse de cobertura fexp_teo, fexp_aju.
 #-------------------------------------------------------------------------------
 
 base <- cobertura_base_total_personas %>% 
@@ -43,6 +44,7 @@ cat("Número de grupos de calibración (dom_area_sexo_gedad):", "\n", n_distinct
 
 # ------------------------------------------------------------------------------
 # Creación del diseño de muestreo
+# est_pob: Creamos el objeto de diseño de la encuesta
 # ------------------------------------------------------------------------------
 
 est_pob <- base %>%

@@ -4,12 +4,6 @@ rm(list = ls())
 source("rutinas/99_librerias/librerias.R")
 
 # ------------------------------------------------------------------------------
-# Base de cobertura total (cobertura acumulada al periodo n)
-#-------------------------------------------------------------------------------
-  
-cobertura_base_total <- import("intermedios/04_cobertura/cobertura_base_total.rds") 
-
-# ------------------------------------------------------------------------------
 # Marco UPM
 # ------------------------------------------------------------------------------
 
@@ -17,13 +11,17 @@ marco_upm <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds") %>%
   group_by(estrato) %>% 
   mutate(Nh = sum(Mi)) %>% #cantidad de viviendas por estrato
   ungroup() %>% 
-  rename(Ni = Mi) #secambia el nombre, es la cantidad de vivindas por UPM. 
+  rename(Ni = Mi) #se cambia el nombre, es la cantidad de vivindas por UPM. 
 
 # ------------------------------------------------------------------------------
-# Cobertura total
+# Cobertura total.
+# id_upm_no_orden: Es el id_upm + numero de orden (esto es un numero del 1 al 13 en el myc)
+# id_upm_no_orden: Seria un id de vivienda.
+# rvo = min(rvo): Me quedo con un hog por viv y le asigno el min(resultado entrevista)-.
+# n_fila == 1: Me quedo con una base de viviendas y no de hogares. 
 # ------------------------------------------------------------------------------
 
-#cobertura_base_total <- import("intermedios/04_cobertura/cobertura_base_total.rds")  
+cobertura_base_total <- import("intermedios/04_cobertura/cobertura_base_total.rds") 
 
 cobertura_base_total_1 <- cobertura_base_total %>% 
   group_by(id_upm) %>% 
@@ -42,20 +40,24 @@ cobertura_base_total_1 <- cobertura_base_total %>%
   mutate(nr = nr + error) %>% 
   select(-error)
 
+#Tiene que dar cero
+sum(cobertura_base_total_1$error)
 
 
-cobertura_base_total_1 %>% 
+if ((cobertura_base_total_1 %>% 
   mutate(control_12 = ed   +  ne    + nr   +  re  ) %>% 
-  #filter(control_12 != 12) %>% 
-  View()
-
+  filter(control_12 != 12) %>% 
+  dim())[1] != 0){
+  cat(" - Existe un error con la variable Elegibilidad -")
+}
 
 # ------------------------------------------------------------------------------
-# Leeomos la información de la actualización cartográfica 
+# Leemos la información de la actualización cartográfica 
 #-------------------------------------------------------------------------------
 
-periodo_ref <- 10
-source("rutinas/06_factores/01_teoricos_ajuste_cobertura/03_borrador.R")
+ruta <- "intermedios/05_factores/01_teoricos_ajuste_cobertura/"
+base_act_acum <- import( paste0(ruta, "base_act_acum.rds"))
+
 
 # ------------------------------------------------------------------------------
 # Probabilidad de primera etapa.
@@ -66,7 +68,7 @@ ruta <- "insumos/05_factores/01_muestra_pii/"
 muestra_primera_etapa <- readRDS(paste0(ruta, "muestra.rds")) %>% 
   mutate(levantada = ifelse(id_upm %in% cobertura_base_total$id_upm, 1, 0)) %>% 
   left_join(select(marco_upm, id_upm, Nh, Ni), by = "id_upm") %>% # atoda la muestra le pego información del marco
-  left_join(select(base_act_acum_1, id_upm, area,estrato, Ni_enlist, Nh_enlis), # atoda la muestra le pego información de la actualización
+  left_join(select(base_act_acum, id_upm, area,estrato, Ni_enlist, Nh_enlis), # atoda la muestra le pego información de la actualización
             by = c("id_upm", "area", "estrato" )) 
 
 #dim 1848 = 66*4*12
