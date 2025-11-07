@@ -14,7 +14,7 @@ marco_upm <- readRDS("insumos/02_muestra_upm/marco/marco_upm.rds") %>%
   rename(Ni = Mi) #se cambia el nombre, es la cantidad de vivindas por UPM. 
 
 # ------------------------------------------------------------------------------
-# Cobertura total.
+# Cobertura_base_total_1:
 # id_upm_no_orden: Es el id_upm + numero de orden (esto es un numero del 1 al 13 en el myc)
 # id_upm_no_orden: Seria un id de vivienda.
 # rvo = min(rvo): Me quedo con un hog por viv y le asigno el min(resultado entrevista)-.
@@ -58,9 +58,9 @@ if ((cobertura_base_total_1 %>%
 ruta <- "intermedios/05_factores/01_teoricos_ajuste_cobertura/"
 base_act_acum <- import( paste0(ruta, "base_act_acum.rds"))
 
-
 # ------------------------------------------------------------------------------
 # Probabilidad de primera etapa.
+# muestra_primera_etapa: Es la base que se usará para el calculo de los factores.
 # ------------------------------------------------------------------------------
 
 ruta <- "insumos/05_factores/01_muestra_pii/"
@@ -91,6 +91,7 @@ colSums(is.na(muestra_primera_etapa))
 n_distinct(muestra_primera_etapa)
 muestra_primera_etapa %>% filter(is.na(Ni_enlist )) %>% View()
  
+
 
 
 
