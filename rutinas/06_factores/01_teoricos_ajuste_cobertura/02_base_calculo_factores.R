@@ -89,7 +89,7 @@ muestra_primera_etapa <- muestra_primera_etapa %>%
 
 colSums(is.na(muestra_primera_etapa))
 n_distinct(muestra_primera_etapa)
-muestra_primera_etapa %>% filter(is.na(Ni_enlist )) %>% View()
+#muestra_primera_etapa %>% filter(is.na(Ni_enlist )) %>% View()
  
 
 

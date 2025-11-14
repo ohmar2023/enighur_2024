@@ -9,7 +9,7 @@ source("rutinas/99_librerias/librerias.R")
 
 ruta <- "intermedios/05_factores/01_teoricos_ajuste_cobertura/wk2.rds"
 wk2 <- readRDS(paste0(ruta))
-
+colSums(is.na(wk2))
 # ------------------------------------------------------------------------------
 # Lectura base personas cobertura
 #-------------------------------------------------------------------------------
@@ -24,14 +24,16 @@ cobertura_base_total_personas <- readRDS(ruta)
 
 base <- cobertura_base_total_personas %>% 
   left_join(wk2 %>% select(id_upm, fexp_teo = d1, fexp_aju = d3), by = "id_upm") %>% 
-  mutate( gedad = case_when(edad < 15 ~ 1, edad >= 15 ~ 1, T ~ NA),
-          sexo = 0,
+  mutate( gedad = case_when(edad < 15 ~ 1, edad >= 15 ~ 1, T ~ NA), # no ocupo
+          sexo = 0, #no ocuppo
     id_calib = case_when(pro == "20" ~ "20_9_0_1",
                        T ~ paste0(pro, "_", area, "_", sexo, "_", gedad))) %>%  
   # left_join(cob_viv %>% 
   #             select(id_upm, panelm, vivienda, id_viv_car), by = c("id_upm", "panelm", "vivienda")) %>% 
   select(id_upm_no_orden, zonal, pro, id_upm, area, estrato,  vivienda, hogar, persona, 
-         id_persona, sexo, edad, id_calib, fexp_teo, fexp_aju)
+         id_persona, sexo, edad, id_calib, fexp_teo, fexp_aju) %>%
+  ##########################################################################################33# QUITAR
+    filter(id_upm != "010353900201") 
 
 # comprobaciones previas a calibración
 
@@ -39,6 +41,8 @@ colSums(is.na(base))
 table(base$id_calib, useNA = "ifany")
 sum(base$fexp_teo)
 sum(base$fexp_aju)
+
+base %>% filter(is.na(fexp_teo)) %>% View()
 
 cat("Número de grupos de calibración (dom_area_sexo_gedad):", "\n", n_distinct(base$id_calib))
 
@@ -64,7 +68,7 @@ est_pob_v <- est_pob %>%
   mutate(control = ifelse(var1_cv > 0.10, 1, 0)) %>% 
   print()
 
-cat("CV máximo sobre grupos de calibración:", "\n", paste0(round(max(est_pob_v$var1_cv)*100,2),"%"))
+cat("CV máximo sobre grupos de calibraciOn:", "\n", paste0(round(max(est_pob_v$var1_cv)*100,2),"%"))
 
 # ------------------------------------------------------------------------------
 # Creación de id de calibración

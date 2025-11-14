@@ -4,10 +4,17 @@ rm(list = ls())
 source("rutinas/99_librerias/librerias.R")
 
 # -----------------------------------------------------------------------------
+# Lo unico que hace es comparar lo levantado en cada periodo vs la muestra.
+# Reporta dos novedades: 
+# 1: Si falatan viviendas por levantar
+# 2:Si tenemso mas viviendas de las enviadas en la muestra
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # Parámetros
 # -----------------------------------------------------------------------------
 
-periodo <- 10 
+periodo <- 11
 p <- periodo
 periodo <- str_pad(periodo,2,"left","0")
 
@@ -20,11 +27,15 @@ ruta <- paste0("intermedios/04_cobertura/cobertura_base_total.rds")
 cobertura_base <- readRDS(ruta) %>% 
   filter(periodo == p)
 
+cobertura_base %>% 
+  filter(!duplicated(id_upm)) %>% 
+  group_by(semana) %>% 
+  summarise(n = n())
 
 # -----------------------------------------------------------------------------
 # Descriptivo periodo 
 # -----------------------------------------------------------------------------
-
+  
 cobertura_base <- cobertura_base %>% 
   filter(periodo == as.numeric(periodo)) %>% 
   mutate(man_nloc = ifelse(zon == "999", "000", man_nloc),
@@ -96,6 +107,10 @@ writeData(wb, sheet = "viv_muestra_no_cober", viv_muestra_no_cober)
 writeData(wb, sheet = "viv_cober_no_muestra", viv_cober_no_muestra)
 
 saveWorkbook(wb, paste0(ruta_exp, paste0("/nov_cob_per_",periodo,".xlsx")), overwrite = T)
+
+
+
+
 
 
 

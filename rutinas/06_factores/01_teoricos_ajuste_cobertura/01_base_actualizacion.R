@@ -1,8 +1,10 @@
 # ------------------------------------------------------------------------------
 # El objetivo de este script es generar la información que proviene del proceso
-# de actualización cartográfica.
+# de actualización cartográfica. Para obtener los parametros de las viviendas
+# enlistadas por UPM y por ESTRATO que se usarán en el calculo de los factores. 
 # La base resultante es base_act_acum_1.
 # ------------------------------------------------------------------------------
+
 
 
 # ------------------------------------------------------------------------------

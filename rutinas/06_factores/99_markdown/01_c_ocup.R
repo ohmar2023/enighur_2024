@@ -13,7 +13,7 @@ source("rutinas/99_librerias/librerias.R")
 # Lectura base de cobertura
 # -----------------------------------------------------------------------------
 
-periodo <- 10
+periodo <- 11
 periodo <- str_pad(periodo, 2, "left", "0")
 
 # -----------------------------------------------------------------------------

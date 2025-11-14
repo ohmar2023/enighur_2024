@@ -8,7 +8,7 @@ source("rutinas/99_librerias/read_zip.R")
 # Lectura de la base de cobertura: Necesitamos indicar el periodo
 # -----------------------------------------------------------------------------
 
-periodo <- 10
+periodo <- 11
 periodo <- str_pad(periodo,2,"left","0")
 
 # -----------------------------------------------------------------------------
@@ -20,6 +20,8 @@ cobertura_base_total <- NULL
 
 for(i in c(1:as.numeric(periodo))){
   
+  
+  print(i)
   periodo <- str_pad(i,2,"left","0")
   
   direc = paste0("insumos/04_cobertura/periodo_", periodo)
@@ -92,7 +94,7 @@ cobertura_base_total <- cobertura_base_total %>%
 # Controles generales
 # -----------------------------------------------------------------------------
 
-table(cobertura_base_total$periodo)
+table(cobertura_base_total$periodo, useNA = "ifany")
 table(cobertura_base_total$periodo, cobertura_base_total$rvo, useNA = "ifany")
 n_distinct(cobertura_base_total$id_upm_no_orden)
 

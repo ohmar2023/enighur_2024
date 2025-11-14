@@ -8,7 +8,7 @@ source("rutinas/99_librerias/read_zip.R")
 # Lectura de la base de cobertura: Necesitamos indicar el periodo
 # -----------------------------------------------------------------------------
 
-periodo <- 10
+periodo <- 11
 periodo <- str_pad(periodo,2,"left","0")
 
 #options(scipen = 999)
