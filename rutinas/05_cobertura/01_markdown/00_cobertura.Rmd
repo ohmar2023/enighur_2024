@@ -46,7 +46,7 @@ header-includes:
     {\Huge\bfseries \textcolor{trueblue} {ENIGHUR} \par}
     \vspace{0.2   cm}
     
-    {\Large\bfseries \textcolor{trueblue} {Periodo de referencia: X} \par}
+    {\Large\bfseries \textcolor{trueblue} {Periodo de referencia: periodo 11 } \par}
     \vspace{1cm}
     
     {\Large  \textcolor{trueblue}{Dirección de Infraestructura Estadística y Muestreo \\ 
@@ -319,7 +319,7 @@ mapa_muestra_nacional
 \newpage
 \textcolor{trueblue}{\section{Recomendaciones}}
 
-- Monitorear constantemente las provincias (particularmente: Pichincha, Guayas, Galápagos y Santo Domingo) y cantones (Particularmente: Quito, Cuenca, Guayaquil.  Santo Domingo y Manta) que presenten deficiencia en la cobertura (gráfica 4, 5 y 6). Las problemáticas de estos dominios deben ser atendidas con urgencia a fin de poder tomar medidas correctivas para mejorar la cobertura, ya que de no alcanzar el umbral mínimo implicaría problemas en los posteriores procesos técnicos a desarrollar.
+- Monitorear constantemente las provincias (particularmente: Pichincha, Guayas, Galápagos y Santo Domingo) y cantones (Particularmente: Quito, Guayaquil.  Santo Domingo y Manta) que presenten deficiencia en la cobertura (gráfica 4, 5 y 6). Las problemáticas de estos dominios deben ser atendidas con urgencia a fin de poder tomar medidas correctivas para mejorar la cobertura, ya que de no alcanzar el umbral mínimo implicaría problemas en los posteriores procesos técnicos a desarrollar.
 
 - Establecer mecanismos que permitan controlar posibles errores que se generen en la actualización cartográfica con respecto a la asignación de la condición de ocupación de la vivienda, particularmente aquellas catalogadas como no elegibles (NE). La coordinación de la Litoral (gráfica 2) y, particularmente, la provincia de Galápagos (gráfico 4)  requieren atención para poder solventar y/o justificar este tipo de novedades.  
 
