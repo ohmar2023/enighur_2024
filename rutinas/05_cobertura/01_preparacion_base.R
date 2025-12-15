@@ -8,7 +8,7 @@ source("rutinas/99_librerias/read_zip.R")
 # Lectura de la base de cobertura: Necesitamos indicar el periodo
 # -----------------------------------------------------------------------------
 
-periodo <- 11
+periodo <- 12
 periodo <- str_pad(periodo,2,"left","0")
 
 # -----------------------------------------------------------------------------
@@ -78,10 +78,10 @@ cobertura_base_total <- cobertura_base_total %>%
                            rvo == 3 ~ "Nadie en casa",
                            rvo == 4 ~ "Vivienda temporal",
                            rvo == 5 ~ "Vivienda desocupada",
-                           rvo == 6 ~ "Vivienda en construcción",
+                           rvo == 6 ~ "Vivienda en construccion",
                            rvo == 7 ~ "Vivienda inhabitada o destruida",
                            rvo == 8 ~ "Vivienda convertida en negocio",
-                           rvo == 9 ~ "Otra razón",
+                           rvo == 9 ~ "Otra razon",
                            TRUE ~ "error")) %>% 
   mutate(Elegibilidad = case_when(rvo == 1 ~ "re",
                                   rvo == 2 ~ "nr",

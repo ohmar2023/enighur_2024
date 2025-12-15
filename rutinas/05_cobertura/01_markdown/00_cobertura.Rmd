@@ -46,7 +46,7 @@ header-includes:
     {\Huge\bfseries \textcolor{trueblue} {ENIGHUR} \par}
     \vspace{0.2   cm}
     
-    {\Large\bfseries \textcolor{trueblue} {Periodo de referencia: periodo 11 } \par}
+    {\Large\bfseries \textcolor{trueblue} {Periodo de referencia: periodo 12 } \par}
     \vspace{1cm}
     
     {\Large  \textcolor{trueblue}{Dirección de Infraestructura Estadística y Muestreo \\ 
@@ -61,7 +61,7 @@ header-includes:
     
     \vfill
     
-    {\large \textcolor{trueblue} {Septiembre - 2025}\par}
+    {\large \textcolor{trueblue} {Diciembre - 2025}\par}
     {\large \textcolor{trueblue} {Quito - Ecuador}\par}
   \end{center}
 \end{titlepage}
